@@ -1,0 +1,38 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # Etapa de Commit: build + testes unitarios + testes de integracao
+  commit-stage:
+    name: Etapa de Commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Testes de unidade
+        run: npm run test:unit
+      - name: Testes de integracao
+        run: npm run test:integration
+
+  # Etapa de Teste de Aceitacao: responsabilidade do Mateus
+  # acceptance-stage:
+  #   name: Etapa de Aceitacao
+  #   needs: commit-stage
+  #   runs-on: ubuntu-latest
+  #   steps: []
+
+  # Etapa de Lancamento: responsabilidade do Bernardo
+  # release-stage:
+  #   name: Etapa de Lancamento
+  #   needs: acceptance-stage
+  #   runs-on: ubuntu-latest
+  #   steps: []
