@@ -7,6 +7,7 @@
     "start": "node dist/server.js",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
+    "test:acceptance": "jest -c jest.acceptance.config.js",
     "test": "jest"
   },
   "dependencies": {
