@@ -63,7 +63,7 @@ Os critérios foram escritos a partir do contrato do `TaskService` (seção do M
 |---|---|---|
 | `GET /health` | 200 | — |
 | `POST /tasks` | 201 + tarefa | 400 |
-| `GET /tasks?status=&priority=` | 200 + lista | — |
+| `GET /tasks?status=&priority=` | 200 + lista | 400 (filtro inválido; coberto só pela integração) |
 | `GET /tasks/summary` | 200 + resumo | — |
 | `GET /tasks/:id` | 200 + tarefa | 404 |
 | `PATCH /tasks/:id` | 200 + tarefa | 400, 404 |
