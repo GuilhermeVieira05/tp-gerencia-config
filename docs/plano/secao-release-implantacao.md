@@ -85,7 +85,7 @@ curl http://localhost:3000/health
 | Build local | Constrói a imagem com cache do GitHub Actions | Erro de compilação ou de Docker |
 | Smoke test | Sobe o contêiner e chama `/health` | Contêiner não responde em ~30 s |
 | Publicar no GHCR | Faz push da imagem com as tags da seção 3 | Falha de autenticação ou de rede |
-| GitHub Release | Cria a release com notas geradas a partir dos commits/PRs | Release já existe |
+| GitHub Release | Cria a release com notas geradas a partir dos commits/PRs. Num re-run, mantém a existente | Falha na API do GitHub |
 | Deploy no Render | Chama o deploy hook com `imgURL` apontando para `X.Y.Z` | Secret ausente ou hook inválido |
 | Verificar implantação | Faz polling de `RENDER_APP_URL/health` por até 5 min | Produção não responde |
 
