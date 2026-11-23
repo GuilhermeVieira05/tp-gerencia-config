@@ -8,7 +8,7 @@ import {
 
 describe('validateTitle', () => {
   it('remove espacos nas pontas', () => {
-    expect(validateTitle('  Estudar GC  ')).toBe('Estudar GC');
+    expect(validateTitle('  Estudar GC  ')).toBe('QUEBRADO DE PROPOSITO');
   });
   it.each([undefined, null, 42, '', '   '])('rejeita %p', (value) => {
     expect(() => validateTitle(value)).toThrow(ValidationError);
