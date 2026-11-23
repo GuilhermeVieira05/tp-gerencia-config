@@ -22,7 +22,7 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 
 **Rastreabilidade:** issue → branch → commits → PR → commit na `main` → tag → imagem (`APP_VERSION` e labels OCI) → release. Com isso é possível ir de uma versão em execução até o pedido que a originou.
 
-**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks "Etapa de Commit" e "Etapa de Aceitação", e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado verificado em 2026-11-22: não está ativa** (ver abaixo).
+**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks "Etapa de Commit" e "Etapa de Aceitação", e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado: ativa desde 2026-11-23** (ver abaixo e `docs/evidencias/protecao-main.md`). Até o PR #18 ela não existia.
 
 #### Procedimento definido × prática realizada
 
@@ -30,9 +30,9 @@ Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commi
 
 | Tema | Definido neste plano | Realizado até 2026-11-22 |
 |---|---|---|
-| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Não ativa.** A API de proteção retorna 404 e não há *rulesets*. A conta que executa a verificação não é administradora do repositório; a ativação cabe ao dono (Guilherme). Issue #11 permanece **aberta** até a regra existir e ser conferida |
-| Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada no GitHub nos 11 PRs** (#1 a #7, #13 a #16, contando os fechados sem merge #4 e #15). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
-| Quem revisa | Rafael, por padrão | Rafael não tem commit, PR ou review registrados até esta data |
+| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Ativa desde 2026-11-23**, configurada pelo dono (Guilherme; issue #11, fechada). Verificável por qualquer integrante: `gh api repos/<dono>/<repo>/branches/main` retorna `protected: true` e os status checks "Etapa de Commit" e "Etapa de Aceitacao" como obrigatórios. Pelo comentário do dono na issue, também exige PR com 1 aprovação e bloqueia *force-push* e deleção; esses itens **não** aparecem para contas sem permissão de administrador. **O administrador pode contornar a regra** (*bypass* habilitado); isso é um risco aceito e deve ser usado só em emergência, com registro no PR ou na issue. Até o PR #18 a `main` não tinha proteção (a API respondia 404) |
+| Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada nos PRs #1 a #7 e #13 a #16** (11 PRs, contando os fechados sem merge #4 e #15). **O PR #18 é o primeiro com review registrada** (Rafael, aprovado, com validação local descrita na review). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
+| Quem revisa | Rafael, por padrão | Rafael não tem commit nem PR; fez a **primeira review registrada**, no PR #18 (aprovado) |
 | Issue → PR (`Closes #N`) | Todo PR referencia uma issue | PRs #1 a #7 anteriores às issues; só o #13 tem `Closes #N`; #14, #15 e #16 não têm; a rodada de correção usa a issue #17 |
 | Estratégia de merge | *Squash* | Mista: *merge commit* nos PRs #1, #5 e #7; *squash* nos PRs #2, #3, #6, #13, #14 e #16 (PRs #4 e #15 fechados sem merge) |
 
@@ -40,7 +40,7 @@ Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commi
 
 **Rastreabilidade a partir daqui:** todo PR novo cita a issue que o originou (`Closes #N`, ou `Refs #N` quando a issue deve continuar aberta). Os PRs sem vínculo listados acima não são corrigidos retroativamente; são rastreados pelo número do PR e pelo histórico de commits.
 
-**Revisão a partir daqui:** a aprovação de outro integrante deve ficar registrada como *review* no GitHub. Um PR integrado sem *review* registra o desvio na sua descrição.
+**Revisão a partir do PR #18:** a aprovação de outro integrante deve ficar registrada como *review* no GitHub. Um PR integrado sem *review* registra o desvio na sua descrição.
 
 ## 3.2.2 CCB (Comitê de Controle de Configuração)
 

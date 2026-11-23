@@ -127,7 +127,7 @@ Em pull requests para a `main` rodam Commit e Aceitação. Uma etapa só roda se
 3. Rode `npm run build` e `npm test` antes de abrir o pull request.
 4. Abra o pull request para a `main`, citando a issue (`Closes #N`), e peça revisão a outro integrante. Merge somente por *squash*.
 
-> **Estado real (verificado em 2026-11-22):** a proteção técnica da `main` **não está ativa** (issue #11) e **nenhum PR até agora tem review registrada no GitHub**. A regra "nenhuma mudança direto na `main`" é, por ora, disciplina do grupo; o plano (3.2.1 e 3.3.2) registra esses desvios.
+> **Estado real:** a proteção da `main` está **ativa desde 2026-11-23** (PR obrigatório, checks "Etapa de Commit" e "Etapa de Aceitação"; o administrador pode contornar). Os PRs #1 a #16 foram integrados **sem review registrada**; a primeira review é a do PR #18. O plano (3.2.1 e 3.3.2) registra esses desvios e `docs/evidencias/protecao-main.md` a verificação.
 
 As convenções completas de nomenclatura e versionamento estão em [docs/plano/secao-introducao-configuracao.md](docs/plano/secao-introducao-configuracao.md).
 

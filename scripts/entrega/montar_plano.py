@@ -42,13 +42,14 @@ capa = cap.split('## Histórico de revisão')[0].replace('# Plano de Gerenciamen
 hist_linhas = [l for l in cap.split('## Histórico de revisão')[1].split('## Índice')[0].strip().split('\n')]
 hist_linhas.append('| 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |')
 hist_linhas.append('| 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |')
+hist_linhas.append('| 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |')
 hist = '\n'.join(hist_linhas)
-ARQUIVOS = len(subprocess.run(['git', 'ls-files'], capture_output=True, text=True, check=True).stdout.split())
+ARQUIVOS = len(subprocess.run(['git', 'ls-files'], capture_output=True, text=True, check=True).stdout.splitlines())
 
 out = []
 A = out.append
 A('# Plano de Gerenciamento de Configuração\n')
-A(capa.replace('| **Versão do plano** | 1.0 |', '| **Versão do plano** | 1.2 |') + '\n')
+A(capa.replace('| **Versão do plano** | 1.0 |', '| **Versão do plano** | 1.3 |') + '\n')
 A('## Histórico de revisão\n'); A(hist + '\n')
 
 A('## Índice\n')
@@ -110,7 +111,7 @@ A('''O grupo tem sete integrantes, trabalhando de forma remota sobre um reposit�
 | Mateus | Autor dos 3 commits do PR #4 (etapa de Aceitação e os 22 cenários), fechado sem merge; o conteúdo foi integrado pelo PR #13 (squash), onde consta como `Co-authored-by` |
 | Bernardo | PRs #2, #3 e #6: `Dockerfile`, etapa de Lançamento, idempotência e release `v0.1.1` |
 | Gabriela | PR #7: README, guia de execução e a introdução do plano |
-| Rafael | Nenhum commit, PR ou review registrado até esta data |
+| Rafael | Nenhum commit ou PR; **primeira review registrada do repositório**, no PR #18 (aprovado) |
 
 Onde a prática difere do papel definido, vale esta tabela. Em especial, **não há reviews de PR registradas** (3.2.1).
 

@@ -37,12 +37,12 @@
 | 1 | 2026-11-22 | `cbce85e` | Relatório em `docs/auditoria_configuracao.md`: aceitação fora da `main` e seções do plano faltantes; correções aplicadas na branch `fix/aceitacao-e-plano` |
 | 2 | 2026-11-22 | `d042f02` | Relatório em `docs/auditoria_rodada2.md`: faltavam backup/retenção/recuperação (3.3.1), prova de bloqueio do pipeline e artefato único. Corrigidos: seção de backup com teste de recuperação, imagem construída uma só vez e reaproveitada no Lançamento, plano alinhado ao pipeline. Execução vermelha registrada em `docs/evidencias/execucao-vermelha.md` (run 45093573497) |
 
-| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório em `docs/auditoria_rodada3.md`. Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções na branch `marcos/correcao-final` (issue #17) |
+| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório em `docs/auditoria_rodada3.md`. Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções no PR #18 (issue #17), mesclado em `fdcc342`, com a primeira review registrada do repositório (Rafael) |
 
 **Desvios conhecidos (registrados nas auditorias 2 e 3):**
 
 - Os PRs #1 a #7 foram abertos antes de o grupo registrar issues. A rastreabilidade issue → PR vale a partir do PR #13; os anteriores são rastreados pelo número do PR e pelo histórico de commits.
-- **A proteção técnica da `main` não está ativa** (verificado na auditoria 3: API de proteção 404, sem *rulesets*). Depende do dono do repositório (issue #11, aberta). Enquanto isso, "só por PR" é disciplina do grupo, verificável no histórico (`git log --first-parent main`).
-- **Nenhum dos 11 PRs tem review registrada**; ver "Procedimento definido × prática realizada" em 3.2.1.
+- **Proteção da `main`:** não existia até o PR #18 (auditoria 3: API de proteção 404). Foi ativada pelo dono em 2026-11-23 (issue #11, fechada); evidência em `docs/evidencias/protecao-main.md`. O administrador pode contornar a regra. Os merges de #1 a #16 ocorreram antes dela.
+- **Nenhum dos PRs #1 a #7 e #13 a #16 tem review registrada** (a primeira é a do #18); ver "Procedimento definido × prática realizada" em 3.2.1.
 - A regra `Closes #N` não foi aplicada nos PRs #14, #15 e #16; a estratégia de merge foi mista (#1, #5 e #7 com *merge commit*). Detalhes em 3.2.1.
 - A verificação pós-deploy por versão só vale a partir da primeira release posterior à correção F-06 (3.3.1).

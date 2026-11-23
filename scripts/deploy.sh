@@ -11,7 +11,8 @@
 #   SKIP_HEALTH_CHECK       (opcional)    "1" dispensa a verificacao pos-deploy (uso local; nunca no pipeline)
 #   HEALTH_RETRIES          (opcional)    tentativas de verificacao, padrao 30
 #   HEALTH_INTERVAL         (opcional)    segundos entre tentativas, padrao 10
-#   HEALTH_TIMEOUT          (opcional)    segundos maximos de cada requisicao, padrao 10
+#   DEPLOY_TIMEOUT          (opcional)    segundos maximos da chamada ao deploy hook, padrao 30
+#   HEALTH_TIMEOUT          (opcional)    segundos maximos de cada consulta a /health, padrao 10
 #
 # A verificacao passa somente quando /health responde com "version" igual a tag da imagem
 # (parte depois do ultimo ":"). Uma instancia antiga, que nao informa a versao ou informa
@@ -24,7 +25,9 @@ if [ -z "$IMAGE" ]; then
   echo "Uso: $0 <imagem:tag>" >&2
   exit 2
 fi
-case "$IMAGE" in
+# A tag e o que vem depois do ultimo ":" do NOME da imagem (depois da ultima "/"), para que
+# um registro com porta (localhost:5000/repo) sem tag seja recusado.
+case "${IMAGE##*/}" in
   *:*) ;;
   *) echo "ERRO: informe a imagem com tag (ex.: ghcr.io/dono/repo:1.2.3)." >&2; exit 2 ;;
 esac
@@ -42,7 +45,7 @@ fi
 
 echo "[1/2] Implantando $IMAGE no Render"
 # imgURL faz o Render implantar exatamente a versao recem-publicada
-curl -fsS --max-time "${HEALTH_TIMEOUT:-10}" -X POST -G "$RENDER_DEPLOY_HOOK_URL" \
+curl -fsS --max-time "${DEPLOY_TIMEOUT:-30}" -X POST -G "$RENDER_DEPLOY_HOOK_URL" \
   --data-urlencode "imgURL=$IMAGE" >/dev/null
 echo "Deploy solicitado."
 
