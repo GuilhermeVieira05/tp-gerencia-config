@@ -74,7 +74,9 @@ jobs:
           exit 1
 
       - name: Testes de aceitacao
-        run: npm run test:acceptance
+        run: |
+          # O conteiner testado precisa informar em /health a versao do package.json
+          EXPECTED_VERSION="$(node -p "require('./package.json').version")" npm run test:acceptance
 
       - name: Salvar imagem aprovada (artefato para o Lancamento)
         run: docker save app:candidate | gzip > app-image.tar.gz

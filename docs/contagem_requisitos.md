@@ -34,9 +34,9 @@
 
 | Nível | Pasta | Casos |
 |---|---|---:|
-| Unidade | `tests/unit/` | 116 |
+| Unidade | `tests/unit/` | 117 |
 | Integração | `tests/integration/` | 55 |
 | Aceitação | `tests/acceptance/` | 22 |
-| **Total** | | **193** |
+| **Total** | | **194** |
 
 Projeto autoral (P-04): não é projeto público de terceiros, então a restrição P-05 não se aplica.

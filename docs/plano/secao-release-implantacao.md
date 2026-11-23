@@ -28,6 +28,7 @@ tag vX.Y.Z  ──▶  Etapa de Commit  ──▶  Etapa de Aceitação  ──�
 ## 2. Gatilho e política de release
 
 - **Push na `main`** roda apenas Commit e Aceitação: valida a integração contínua, mas não implanta.
+- **Decisão de projeto:** o Lançamento por tag é **entrega contínua** (o sistema está sempre pronto para ser liberado, e a tag é a decisão humana de liberar a baseline). **Implantação contínua** seria publicar em produção a cada merge na `main`; o grupo não a adotou, para que cada versão em produção corresponda a uma baseline identificada. Consequência: o último commit da `main` mostra o Lançamento como *skipped*; a execução completa das três etapas está na execução da tag (por exemplo, `v0.1.2`, run 45093771847).
 - **Push de tag `vX.Y.Z`** roda o pipeline completo, incluindo o Lançamento.
 - O job só executa se as etapas anteriores passarem (`needs`). Uma tag criada sobre um commit quebrado não gera release.
 - A tag deve ser igual à versão do `package.json` (`v` + `version`). Se forem diferentes, o primeiro passo do job falha. Assim, a versão declarada no código e a versão publicada nunca divergem.
@@ -87,7 +88,7 @@ curl http://localhost:3000/health
 | Publicar no GHCR | Aplica as tags da seção 3 (`docker tag`) à **mesma** imagem e faz push, sem reconstruir | Falha de autenticação ou de rede |
 | GitHub Release | Cria a release com notas geradas a partir dos commits/PRs. Num re-run, mantém a existente | Falha na API do GitHub |
 | Deploy no Render | Chama o deploy hook com `imgURL` apontando para `X.Y.Z` | Secret ausente ou hook inválido |
-| Verificar implantação | Faz polling de `RENDER_APP_URL/health` por até 5 min | Produção não responde |
+| Verificar implantação | `scripts/deploy.sh` consulta `RENDER_APP_URL/health` (30 tentativas a cada 10 s, com timeout por requisição) e só passa quando o campo `version` é igual a `X.Y.Z` | `RENDER_APP_URL` ausente, versão diferente ou sem resposta no prazo |
 
 O smoke test acontece **antes** do push. Uma imagem que nem sobe nunca chega ao registro.
 
@@ -127,6 +128,6 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 ## 9. Limitações conhecidas
 
 - O plano gratuito do Render hiberna o serviço após inatividade. A primeira requisição pode levar até ~1 min, o que a verificação pós-deploy tolera.
-- `/health` não informa a versão. Por isso a verificação pós-deploy confirma que a aplicação está no ar, mas não que a versão nova já substituiu a anterior. Uma melhoria possível é incluir `APP_VERSION` na resposta de `/health` (camada HTTP).
-- **Artefato único:** a imagem é construída uma só vez, na Aceitação, e passada ao Lançamento como artefato do workflow (`app-image`, retenção de 7 dias). O Lançamento confere o ID da imagem antes de publicar. Se o artefato expirar, é preciso reexecutar o pipeline da tag.
+- **Verificação por versão (desde o PR da rodada final de correção):** `/health` devolve `{status, version}` e o `deploy.sh` só aceita o deploy quando `version` bate com a tag. As releases `v0.1.0` a `v0.1.2` foram implantadas **antes** dessa mudança: a instância atual no Render ainda responde `/health` sem `version`, e nelas a verificação só provou que a aplicação estava no ar, não que a versão nova a substituíra (no log da `v0.1.2`, "OK na tentativa 1"). A verificação por versão passa a valer na primeira release criada depois da integração desse PR.
+- **Artefato único:** a imagem é construída uma só vez, na Aceitação, e passada ao Lançamento como artefato do workflow (`app-image`, retenção de 7 dias). O Lançamento confere o ID da imagem antes de publicar. Se o artefato expirar, é preciso reexecutar o pipeline da tag. O `npm run build` (`tsc`) da Etapa de Commit é uma **validação de compilação** e não gera o artefato entregue: o artefato que segue da Aceitação para o Lançamento é a **imagem Docker**, cujo estágio de build compila o TypeScript de novo dentro do `Dockerfile`. Não se afirma, portanto, que o `dist/` do Commit seja o binário entregue; o que se garante é que a imagem lançada é a mesma (mesmo ID) que passou na Aceitação.
 - O Lançamento só roda em tag (a tag é a baseline). Push na `main` executa apenas Commit e Aceitação.

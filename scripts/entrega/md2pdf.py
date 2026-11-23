@@ -33,7 +33,9 @@ def main(src, dst):
     import re
     html = re.sub(r'(\d{4}-\d{2}-\d{2})', r'<span style="white-space:nowrap">\1</span>', html)
     html = re.sub(r'<thead>\s*<tr>\s*(<th>\s*</th>\s*)+</tr>\s*</thead>', '', html)
-    doc = f'<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><style>{CSS}</style></head><body>{html}</body></html>'
+    m = re.search(r'<h1[^>]*>(.*?)</h1>', html, flags=re.S)
+    titulo = re.sub(r'<[^>]+>', '', m.group(1)).strip() if m else 'Documento'
+    doc = f'<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>{titulo}</title><style>{CSS}</style></head><body>{html}</body></html>'
     with tempfile.TemporaryDirectory() as t:
         h = pathlib.Path(t) / 'doc.html'; h.write_text(doc, encoding='utf-8')
         chrome = os.environ.get('CHROME', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome')

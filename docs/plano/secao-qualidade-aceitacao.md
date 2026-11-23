@@ -44,7 +44,7 @@ Cada critério vira um bloco `describe` no código, com cenários no formato **D
 
 | ID | Critério | Cenários |
 |---|---|---|
-| CA01 | A aplicação implantada responde ao health check | `/health` → 200 `{status: "ok"}` |
+| CA01 | A aplicação implantada responde ao health check | `/health` → 200 `{status: "ok", version}`; no pipeline, `version` deve ser igual à do `package.json` |
 | CA02 | O usuário cria tarefas e entradas inválidas são recusadas | Criação com padrões (`todo`, `medium`) → 201; todos os campos → 201; sem título, título em branco, título > 100 caracteres, prioridade inválida, data inválida → 400 |
 | CA03 | O usuário consulta e filtra tarefas | Por id → 200; id inexistente → 404; filtro por prioridade; filtro por status |
 | CA04 | O usuário edita uma tarefa sem perder os outros campos | Edição parcial → 200 e campos não enviados preservados; título inválido → 400 sem alterar a tarefa; id inexistente → 404 |

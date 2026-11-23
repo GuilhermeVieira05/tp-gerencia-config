@@ -34,6 +34,7 @@ TMP="$(mktemp -d)"
 mkdir "$TMP/$NOME"
 rsync -a --exclude node_modules --exclude dist --exclude coverage --exclude .DS_Store \
   --exclude PROMPT_AUDITORIA_TP1.md --exclude TP1_Gerencia_de_Configuracao_FONTE_DA_VERDADE.md \
+  --exclude AUDITORIA_TP1_FINAL.md --exclude PROMPT_CORRECAO_FINAL.md \
   ./ "$TMP/$NOME/"
 rm -f "$OUT/$NOME.zip"
 (cd "$TMP" && zip -qr "$(cd - >/dev/null; cd "$OUT" && pwd)/$NOME.zip" "$NOME")

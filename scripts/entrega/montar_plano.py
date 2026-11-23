@@ -2,7 +2,7 @@
 """Monta docs/plano/PLANO_DE_CM.md na estrutura do modelo (secoes 1 a 6) a partir dos fragmentos
 em docs/plano/. Os fragmentos continuam sendo a fonte; este arquivo e gerado.
 Uso: python3 scripts/entrega/montar_plano.py"""
-import re, pathlib
+import re, pathlib, subprocess
 
 D = pathlib.Path('docs/plano')
 
@@ -41,12 +41,14 @@ cap = ler('secao-capa-historico.md')
 capa = cap.split('## Histórico de revisão')[0].replace('# Plano de Gerenciamento de Configuração', '').strip()
 hist_linhas = [l for l in cap.split('## Histórico de revisão')[1].split('## Índice')[0].strip().split('\n')]
 hist_linhas.append('| 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |')
+hist_linhas.append('| 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |')
 hist = '\n'.join(hist_linhas)
+ARQUIVOS = len(subprocess.run(['git', 'ls-files'], capture_output=True, text=True, check=True).stdout.split())
 
 out = []
 A = out.append
 A('# Plano de Gerenciamento de Configuração\n')
-A(capa.replace('| **Versão do plano** | 1.0 |', '| **Versão do plano** | 1.1 |') + '\n')
+A(capa.replace('| **Versão do plano** | 1.0 |', '| **Versão do plano** | 1.2 |') + '\n')
 A('## Histórico de revisão\n'); A(hist + '\n')
 
 A('## Índice\n')
@@ -98,7 +100,21 @@ A('''O grupo tem sete integrantes, trabalhando de forma remota sobre um reposit�
 | Camada HTTP e testes de integração | Carlos | Camada HTTP, testes de unidade e de integração |
 | Documentação | Gabriela | README, guia de execução, introdução e identificação de configuração |
 
-**Interfaces:** o código entra pela `main` por PR; o pipeline é a interface entre o desenvolvimento e a operação (GitHub Actions → GHCR → Render); o professor avalia o plano, o repositório e a apresentação.
+**Papéis × registro no Git.** A tabela acima é o **papel definido**. O que o histórico mostra (verificado em 2026-11-22, commit `69b137f`; `git log` e GitHub) é:
+
+| Integrante | Registro no Git e no GitHub |
+|---|---|
+| Guilherme | 1 commit (estrutura inicial da API e etapa de Commit do pipeline); dono do repositório |
+| Marcos | Camada de domínio e testes de unidade; PRs #13, #14 e #16 (integração da Aceitação, script de implantação, plano consolidado, artefato único, slides, release `v0.1.2`) |
+| Carlos | PR #5: camada HTTP, testes de unidade e de integração |
+| Mateus | Autor dos 3 commits do PR #4 (etapa de Aceitação e os 22 cenários), fechado sem merge; o conteúdo foi integrado pelo PR #13 (squash), onde consta como `Co-authored-by` |
+| Bernardo | PRs #2, #3 e #6: `Dockerfile`, etapa de Lançamento, idempotência e release `v0.1.1` |
+| Gabriela | PR #7: README, guia de execução e a introdução do plano |
+| Rafael | Nenhum commit, PR ou review registrado até esta data |
+
+Onde a prática difere do papel definido, vale esta tabela. Em especial, **não há reviews de PR registradas** (3.2.1).
+
+**Interfaces:** o código deve entrar pela `main` por PR; o pipeline é a interface entre o desenvolvimento e a operação (GitHub Actions → GHCR → Render); o professor avalia o plano, o repositório e a apresentação.
 ''')
 A('### 2.2 Ferramentas, ambiente e infraestrutura\n')
 A('''| Ferramenta | Versão | Uso |
@@ -120,7 +136,7 @@ A('''| Ferramenta | Versão | Uso |
 | Integração contínua | Runner `ubuntu-latest` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
 | Produção | Render, `https://tp-gerencia-config.onrender.com` | Sistema entregue aos usuários |
 
-**Volume e distribuição:** repositório pequeno (48 arquivos versionados), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
+**Volume e distribuição:** repositório pequeno (**@@ARQUIVOS@@** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
 ''')
 
 # ---------- 3.1 ----------
@@ -189,10 +205,10 @@ push na main / PR / tag vX.Y.Z
 [1. COMMIT]    npm ci -> build -> testes de unidade -> testes de integração
    |  (falhou? nada avança)
    v
-[2. ACEITAÇÃO] constrói a imagem UMA vez -> sobe o contêiner -> 22 testes via HTTP -> salva a imagem como artefato
+[2. ACEITAÇÃO] constrói a imagem UMA vez -> sobe o contêiner -> 22 cenários via HTTP -> salva a imagem como artefato
    |  (falhou? não há lançamento)
    v
-[3. LANÇAMENTO] (só em tag) carrega a MESMA imagem, confere o ID -> smoke test -> GHCR -> GitHub Release -> deploy.sh -> /health
+[3. LANÇAMENTO] (só em tag) carrega a MESMA imagem, confere o ID -> smoke test -> GHCR -> GitHub Release -> deploy.sh -> /health com a versão esperada
 ```
 
 | Seção do plano | Onde aparece no pipeline |
@@ -204,12 +220,13 @@ push na main / PR / tag vX.Y.Z
 | 3.3.2 Auditoria | Registros de execução; artefato único (ID conferido) |
 | 6 Fornecedores | `npm ci` com lockfile; imagens e actions com versão fixada |
 
-**Artefato único:** a imagem é construída apenas na Aceitação. O Lançamento a recebe como artefato do workflow, compara o ID com o testado e só então aplica as tags e publica. O mesmo `scripts/deploy.sh` entregue ao professor é o chamado pelo pipeline.
+**Artefato único:** a imagem Docker é construída apenas na Aceitação (o `tsc` da Etapa de Commit é só validação de compilação). O Lançamento a recebe como artefato do workflow, compara o ID com o testado e só então aplica as tags e publica. O mesmo `scripts/deploy.sh` entregue ao professor é o chamado pelo pipeline.
 ''')
 
 texto = '\n'.join(out)
 texto = re.sub(r'^(### )\d\. ', r'\1', texto, flags=re.M)
 texto = sub(texto, [
+ ('@@ARQUIVOS@@', str(ARQUIVOS)),
  ('(ver seção 2.4)', '(ver "Itens de configuração fora do Git", em 3.1.1)'),
  ('(seção 4)', '(ver "Versionamento", em 3.1.1)'),
  ('(seção 2.4)', '(em "Itens de configuração fora do Git", 3.1.1)'),

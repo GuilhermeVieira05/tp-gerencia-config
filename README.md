@@ -47,7 +47,7 @@ Em outro terminal:
 
 ```bash
 curl http://localhost:3000/health
-# {"status":"ok"}
+# {"status":"ok","version":"dev"}
 ```
 
 O passo a passo completo, com Docker, testes, exemplos de requisição e solução de problemas, está em **[docs/como-rodar.md](docs/como-rodar.md)**.
@@ -116,6 +116,8 @@ Erros respondem no formato `{ "error": "mensagem" }`: **400** para entrada invá
 
 Em pull requests para a `main` rodam Commit e Aceitação. Uma etapa só roda se a anterior passar.
 
+**Entrega contínua, não implantação contínua:** um push na `main` executa Commit e Aceitação (o Lançamento aparece como *skipped*); a tag `vX.Y.Z` é a decisão humana de liberar e dispara o Lançamento. A imagem Docker é construída uma única vez, na Aceitação, e é ela (mesmo ID, conferido) que o Lançamento publica; o `tsc` do Commit é só validação de compilação. A execução completa das três etapas está na tag `v0.1.2` (run 45093771847). `/health` informa a versão (`{"status":"ok","version":"X.Y.Z"}`) e o `scripts/deploy.sh` só aceita o deploy quando a versão confere; a produção atual (`v0.1.2`) é anterior a essa mudança.
+
 **Sistema implantado:** https://tp-gerencia-config.onrender.com (`/health`). O plano gratuito do Render hiberna após inatividade, então a primeira requisição pode levar cerca de 1 minuto. Para gerar uma release, veja a seção de release em [docs/plano/secao-release-implantacao.md](docs/plano/secao-release-implantacao.md).
 
 ## Como contribuir
@@ -123,7 +125,9 @@ Em pull requests para a `main` rodam Commit e Aceitação. Uma etapa só roda se
 1. Atualize a `main` e crie uma branch `<autor>/<assunto>` (ex.: `gabriela/readme-plano`).
 2. Faça commits no padrão [Conventional Commits](https://www.conventionalcommits.org/pt-br/) (`feat:`, `fix:`, `docs:`, `test:`, `chore:`).
 3. Rode `npm run build` e `npm test` antes de abrir o pull request.
-4. Abra o pull request para a `main`. Nenhuma mudança entra direto na `main`: tudo passa por pull request revisado.
+4. Abra o pull request para a `main`, citando a issue (`Closes #N`), e peça revisão a outro integrante. Merge somente por *squash*.
+
+> **Estado real (verificado em 2026-11-22):** a proteção técnica da `main` **não está ativa** (issue #11) e **nenhum PR até agora tem review registrada no GitHub**. A regra "nenhuma mudança direto na `main`" é, por ora, disciplina do grupo; o plano (3.2.1 e 3.3.2) registra esses desvios.
 
 As convenções completas de nomenclatura e versionamento estão em [docs/plano/secao-introducao-configuracao.md](docs/plano/secao-introducao-configuracao.md).
 
@@ -139,15 +143,16 @@ As convenções completas de nomenclatura e versionamento estão em [docs/plano/
 | [Backup, retenção e recuperação](docs/plano/secao-backup-recuperacao.md) | Onde ficam os artefatos e como restaurar |
 | [Plano consolidado](docs/plano/PLANO_DE_CM.md) | Plano de GC completo, na estrutura do modelo (origem do PDF) |
 | [Contagem de requisitos](docs/contagem_requisitos.md) | Evidência de P-01 e P-02 |
+| [Auditorias](docs/auditoria_rodada3.md) | Rodadas 1 a 3 (`docs/auditoria_configuracao.md`, `docs/auditoria_rodada2.md`, `docs/auditoria_rodada3.md`) |
 
 ## Equipe
 
 | Pessoa | Responsabilidade técnica |
 |---|---|
 | Guilherme | Repositório, proteção da `main` e workflow do GitHub Actions (etapa de Commit) |
-| Marcos | Camada de domínio e seus testes de unidade |
+| Marcos | Camada de domínio e seus testes de unidade; integração da Aceitação, script de implantação, plano consolidado e release `v0.1.2` (PRs #13, #14, #16) |
 | Carlos | Camada HTTP, seus testes de unidade e os testes de integração |
-| Mateus | Teste de aceitação automatizado e sua etapa no pipeline |
+| Mateus | Teste de aceitação automatizado e sua etapa no pipeline (PR #4, fechado sem merge; integrado pelo #13 com `Co-authored-by`) |
 | Bernardo | Dockerfile e etapa de Lançamento (CD) |
 | Gabriela | README e documentação de como rodar |
-| Rafael | Revisão de código e dos pull requests |
+| Rafael | Revisão de código e dos pull requests (papel definido; sem commits ou reviews registrados até 2026-11-22) |
