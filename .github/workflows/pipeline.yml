@@ -5,6 +5,9 @@ on:
     branches: [main]
     # Tag semver dispara a etapa de Lancamento (ex.: v1.0.0)
     tags: ['v*.*.*']
+  # Valida o PR antes do merge (Commit e Aceitacao); o Lancamento so roda em tag
+  pull_request:
+    branches: [main]
 
 env:
   REGISTRY: ghcr.io
