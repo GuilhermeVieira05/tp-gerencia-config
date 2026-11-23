@@ -1,6 +1,6 @@
 # Auditoria de Configuração — TP1 (rodada 3)
 
-> **Relatório histórico** do estado do commit `69b137f` (`v0.1.2`). Não descreve o estado atual: as correções estão na branch `marcos/correcao-final` (issue #17) e o que depende do dono do repositório (proteção da `main`, issue #11) segue aberto. Uma imprecisão sobre a autoria do Mateus foi corrigida neste arquivo (nota no achado F-07).
+> **Relatório histórico** do estado do commit `69b137f` (`v0.1.2`). Não descreve o estado atual: as correções estão na branch `marcos/correcao-final` (issue #17) e o que depende do dono do repositório (proteção da `main`, issue #11) segue aberto. Uma imprecisão sobre a autoria do Mateus foi corrigida neste arquivo (nota no achado F-07). **Nota:** os "404" do endpoint `.../branches/main/protection` citados aqui não provam a ausência de proteção, porque esse endpoint exige permissão de administrador e responde 404 às demais contas; a ausência foi confirmada depois pela issue #11 e pela declaração do dono.
 
 **Auditado:** commit `69b137f` (HEAD de `main`, tag `v0.1.2`) · **Data:** 2026-11-22 · **Régua:** `TP1_Gerencia_de_Configuracao_FONTE_DA_VERDADE.md`
 **Método:** execução real em cópia limpa (`git archive HEAD`), consulta à API do GitHub (`gh`), extração de texto dos PDFs de `../entrega-tp1/` e descompactação do zip entregue. Onde não executei, está dito.

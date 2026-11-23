@@ -139,7 +139,7 @@ Identificadores no código ficam em inglês. Comentários, documentação, nomes
 
 | Branch | Regra | Vida útil |
 |---|---|---|
-| `main` | Única branch permanente. Sempre compilável e com testes verdes. Regra: só recebe mudanças por PR (a proteção técnica ainda não está ativa; ver 3.2.1 e 3.3.2) | Permanente |
+| `main` | Única branch permanente. Sempre compilável e com testes verdes. Regra: só recebe mudanças por PR (proteção técnica ativa desde 2026-11-23; ver 3.2.1 e 3.3.2) | Permanente |
 | De trabalho | `<autor>/<assunto>`, em minúsculas, `kebab-case`, sem acentos | Até o merge do PR. Depois é apagada |
 
 Exemplos do histórico: `carlos/camada-http-testes`, `mateus/teste-aceitacao`, `gabriela/readme-plano`.

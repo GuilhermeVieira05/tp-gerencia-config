@@ -5,7 +5,7 @@
 | **Organização** | Grupo do TP1 · Gerência de Configuração e Evolução de Software |
 | **Projeto** | tp-gerencia-config: API REST de gerenciamento de tarefas |
 | **Repositório** | https://github.com/GuilhermeVieira05/tp-gerencia-config |
-| **Versão do plano** | 1.2 |
+| **Versão do plano** | 1.3 |
 | **Modelo** | Plano de Gerenciamento de Configuração (RUP) |
 
 ## Histórico de revisão
@@ -19,6 +19,7 @@
 | 2026-11-22 | 1.0 | Controle de mudanças e CCB, auditorias, marcos, treinamento e subfornecedores; capa e histórico | Marcos (registro no Git) |
 | 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |
 | 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |
+| 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |
 
 ## Índice
 
@@ -118,7 +119,7 @@ O grupo tem sete integrantes, trabalhando de forma remota sobre um repositório 
 | Camada HTTP e testes de integração | Carlos | Camada HTTP, testes de unidade e de integração |
 | Documentação | Gabriela | README, guia de execução, introdução e identificação de configuração |
 
-**Papéis × registro no Git.** A tabela acima é o **papel definido**. O que o histórico mostra (verificado em 2026-11-22, commit `69b137f`; `git log` e GitHub) é:
+**Papéis × registro no Git.** A tabela acima é o **papel definido**. O que o histórico mostra (verificado em 2026-11-23, commit `fdcc342`; `git log` e GitHub) é:
 
 | Integrante | Registro no Git e no GitHub |
 |---|---|
@@ -128,9 +129,9 @@ O grupo tem sete integrantes, trabalhando de forma remota sobre um repositório 
 | Mateus | Autor dos 3 commits do PR #4 (etapa de Aceitação e os 22 cenários), fechado sem merge; o conteúdo foi integrado pelo PR #13 (squash), onde consta como `Co-authored-by` |
 | Bernardo | PRs #2, #3 e #6: `Dockerfile`, etapa de Lançamento, idempotência e release `v0.1.1` |
 | Gabriela | PR #7: README, guia de execução e a introdução do plano |
-| Rafael | Nenhum commit, PR ou review registrado até esta data |
+| Rafael | Nenhum commit ou PR; **primeira review registrada do repositório**, no PR #18 (aprovado) |
 
-Onde a prática difere do papel definido, vale esta tabela. Em especial, **não há reviews de PR registradas** (3.2.1).
+Onde a prática difere do papel definido, vale esta tabela. Em especial, **nenhum PR anterior ao #18 tem review registrada** (3.2.1).
 
 **Interfaces:** o código deve entrar pela `main` por PR; o pipeline é a interface entre o desenvolvimento e a operação (GitHub Actions → GHCR → Render); o professor avalia o plano, o repositório e a apresentação.
 
@@ -155,7 +156,7 @@ Onde a prática difere do papel definido, vale esta tabela. Em especial, **não 
 | Integração contínua | Runner `ubuntu-latest` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
 | Produção | Render, `https://tp-gerencia-config.onrender.com` | Sistema entregue aos usuários |
 
-**Volume e distribuição:** repositório pequeno (**60** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
+**Volume e distribuição:** repositório pequeno (**62** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
 
 ## 3. O Programa de Gerenciamento de Configuração
 
@@ -238,7 +239,7 @@ Identificadores no código ficam em inglês. Comentários, documentação, nomes
 
 | Branch | Regra | Vida útil |
 |---|---|---|
-| `main` | Única branch permanente. Sempre compilável e com testes verdes. Regra: só recebe mudanças por PR (a proteção técnica ainda não está ativa; ver 3.2.1 e 3.3.2) | Permanente |
+| `main` | Única branch permanente. Sempre compilável e com testes verdes. Regra: só recebe mudanças por PR (proteção técnica ativa desde 2026-11-23; ver 3.2.1 e 3.3.2) | Permanente |
 | De trabalho | `<autor>/<assunto>`, em minúsculas, `kebab-case`, sem acentos | Até o merge do PR. Depois é apagada |
 
 Exemplos do histórico: `carlos/camada-http-testes`, `mateus/teste-aceitacao`, `gabriela/readme-plano`.
@@ -391,17 +392,17 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 
 **Rastreabilidade:** issue → branch → commits → PR → commit na `main` → tag → imagem (`APP_VERSION` e labels OCI) → release. Com isso é possível ir de uma versão em execução até o pedido que a originou.
 
-**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks "Etapa de Commit" e "Etapa de Aceitação", e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado verificado em 2026-11-22: não está ativa** (ver abaixo).
+**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks **`Etapa de Commit`** e **`Etapa de Aceitacao`** (os nomes exatos dos jobs em `pipeline.yml`, **sem acento** no segundo; com acento o check nunca seria satisfeito e todo PR ficaria travado), e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado: ativa desde 2026-11-23** (ver abaixo e `docs/evidencias/protecao-main.md`). Até o PR #18 ela não existia, segundo a issue #11 (aberta até a ativação) e a declaração do dono.
 
 #### Procedimento definido × prática realizada
 
-Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commit `69b137f`:
+Verificado em 2026-11-23 no GitHub (`gh api`) e no histórico Git, sobre o commit `fdcc342` (a `main` após o PR #18). Onde o estado mudou durante a rodada de correção, a linha diz a data:
 
-| Tema | Definido neste plano | Realizado até 2026-11-22 |
+| Tema | Definido neste plano | Realizado até 2026-11-23 |
 |---|---|---|
-| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Não ativa.** A API de proteção retorna 404 e não há *rulesets*. A conta que executa a verificação não é administradora do repositório; a ativação cabe ao dono (Guilherme). Issue #11 permanece **aberta** até a regra existir e ser conferida |
-| Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada no GitHub nos 11 PRs** (#1 a #7, #13 a #16, contando os fechados sem merge #4 e #15). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
-| Quem revisa | Rafael, por padrão | Rafael não tem commit, PR ou review registrados até esta data |
+| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Ativa desde 2026-11-23**, configurada pelo dono (Guilherme; issue #11, fechada). Verificável por qualquer integrante: `gh api repos/<dono>/<repo>/branches/main` retorna `protected: true` e os status checks "Etapa de Commit" e "Etapa de Aceitacao" como obrigatórios. O print de *Settings → Branches* (`docs/evidencias/protecao-main.png`) comprova o restante: PR obrigatório com 1 aprovação, *force-push* e deleção bloqueados (esses dois valem **inclusive para administradores**); esses itens não aparecem na API para contas sem permissão de administrador. **O administrador pode contornar as regras de PR, aprovação e checks** (a opção *Do not allow bypassing* está desmarcada); isso é um risco aceito e deve ser usado só em emergência, com registro no PR ou na issue. Antes disso não havia proteção, segundo a issue #11 (aberta até a ativação) e a declaração do dono; o 404 de `.../branches/main/protection` para contas sem permissão de administrador **não** prova a ausência, porque essa conta receberia 404 de qualquer forma |
+| Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada nos PRs #1 a #7 e #13 a #16** (11 PRs, contando os fechados sem merge #4 e #15). **O PR #18 é o primeiro com review registrada** (Rafael, aprovado, com validação local descrita na review). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
+| Quem revisa | Rafael, por padrão | Rafael não tem commit nem PR; fez a **primeira review registrada**, no PR #18 (aprovado) |
 | Issue → PR (`Closes #N`) | Todo PR referencia uma issue | PRs #1 a #7 anteriores às issues; só o #13 tem `Closes #N`; #14, #15 e #16 não têm; a rodada de correção usa a issue #17 |
 | Estratégia de merge | *Squash* | Mista: *merge commit* nos PRs #1, #5 e #7; *squash* nos PRs #2, #3, #6, #13, #14 e #16 (PRs #4 e #15 fechados sem merge) |
 
@@ -409,7 +410,7 @@ Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commi
 
 **Rastreabilidade a partir daqui:** todo PR novo cita a issue que o originou (`Closes #N`, ou `Refs #N` quando a issue deve continuar aberta). Os PRs sem vínculo listados acima não são corrigidos retroativamente; são rastreados pelo número do PR e pelo histórico de commits.
 
-**Revisão a partir daqui:** a aprovação de outro integrante deve ficar registrada como *review* no GitHub. Um PR integrado sem *review* registra o desvio na sua descrição.
+**Revisão a partir do PR #18:** a aprovação de outro integrante deve ficar registrada como *review* no GitHub. Um PR integrado sem *review* registra o desvio na sua descrição.
 
 #### 3.2.2 CCB (Comitê de Controle de Configuração)
 
@@ -429,7 +430,7 @@ Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commi
 4. Reuniões: curtas, ao fim de cada marco (ver "Versionamento", em 3.1.1), para revisar issues abertas e a pauta da próxima baseline. A ata fica como comentário na issue do marco.
 5. Mudanças rejeitadas ficam registradas na issue com a justificativa.
 
-**Prática até 2026-11-22:** não há atas, votações nem aprovações do CCB registradas; o único registro de verificação das mudanças é o resultado do pipeline. As três tags criadas (`v0.1.0` a `v0.1.2`) também não têm registro de aprovação do presidente e do responsável por releases além da própria tag anotada e do GitHub Release. Daqui em diante, as decisões do CCB são registradas no PR ou na issue correspondente.
+**Prática até 2026-11-23:** não há atas nem votações do CCB registradas; a única aprovação registrada é a review do Rafael no PR #18, e fora isso o registro de verificação das mudanças é o resultado do pipeline. As três tags criadas (`v0.1.0` a `v0.1.2`) também não têm registro de aprovação do presidente e do responsável por releases além da própria tag anotada e do GitHub Release. Daqui em diante, as decisões do CCB são registradas no PR ou na issue correspondente.
 
 ### 3.3 Contabilidade do status de configuração
 
@@ -604,7 +605,7 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 - [ ] Pipeline verde com Commit, Aceitação e Lançamento
 - [ ] Tag `vX.Y.Z` igual a `package.json` e com GitHub Release
 - [ ] Imagem `ghcr.io/guilhermevieira05/tp-gerencia-config:X.Y.Z` existe e `/health` responde no Render
-- [ ] Proteção da `main` ativa (`gh api repos/<dono>/<repo>/branches/main/protection` responde 200; print em `docs/evidencias/`)
+- [ ] Proteção da `main` ativa: `gh api repos/<dono>/<repo>/branches/main --jq '{protected, protection}'` mostra `protected: true` e os checks `Etapa de Commit` e `Etapa de Aceitacao` (o endpoint `.../protection` exige permissão de administrador e responde 404 às demais contas, mesmo com a proteção ativa); print de *Settings → Branches* em `docs/evidencias/`
 - [ ] Toda PR mesclada referencia uma issue
 
 **Registro:** o resultado de cada rodada vai em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md` (rodada 1), `docs/auditoria_rodada2.md` (rodada 2) e `docs/auditoria_rodada3.md` (rodada 3), com data, commit auditado, achados e correções. Os relatórios são históricos: descrevem o estado do commit auditado, não o atual.
@@ -616,13 +617,13 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 | 1 | 2026-11-22 | `cbce85e` | Relatório em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md`: aceitação fora da `main` e seções do plano faltantes; correções aplicadas na branch `fix/aceitacao-e-plano` |
 | 2 | 2026-11-22 | `d042f02` | Relatório em `docs/auditoria_rodada2.md`: faltavam backup/retenção/recuperação (3.3.1), prova de bloqueio do pipeline e artefato único. Corrigidos: seção de backup com teste de recuperação, imagem construída uma só vez e reaproveitada no Lançamento, plano alinhado ao pipeline. Execução vermelha registrada em `docs/evidencias/execucao-vermelha.md` (run 45093573497) |
 
-| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório em `docs/auditoria_rodada3.md`. Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções na branch `marcos/correcao-final` (issue #17) |
+| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório em `docs/auditoria_rodada3.md`. Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções no PR #18 (issue #17), mesclado em `fdcc342`, com a primeira review registrada do repositório (Rafael) |
 
 **Desvios conhecidos (registrados nas auditorias 2 e 3):**
 
 - Os PRs #1 a #7 foram abertos antes de o grupo registrar issues. A rastreabilidade issue → PR vale a partir do PR #13; os anteriores são rastreados pelo número do PR e pelo histórico de commits.
-- **A proteção técnica da `main` não está ativa** (verificado na auditoria 3: API de proteção 404, sem *rulesets*). Depende do dono do repositório (issue #11, aberta). Enquanto isso, "só por PR" é disciplina do grupo, verificável no histórico (`git log --first-parent main`).
-- **Nenhum dos 11 PRs tem review registrada**; ver "Procedimento definido × prática realizada" em 3.2.1.
+- **Proteção da `main`:** não existia até o PR #18, segundo a issue #11 (aberta até a ativação) e a declaração do dono; a auditoria 3 registrou 404 no endpoint de proteção, mas esse resultado não prova a ausência para contas sem permissão de administrador. Foi ativada pelo dono em 2026-11-23 (issue #11, fechada); evidência em `docs/evidencias/protecao-main.md`. O administrador pode contornar a regra. Os merges dos PRs #1 a #7, #13 a #16 e #18 ocorreram antes dela.
+- **Nenhum dos PRs #1 a #7 e #13 a #16 tem review registrada** (a primeira é a do #18); ver "Procedimento definido × prática realizada" em 3.2.1.
 - A regra `Closes #N` não foi aplicada nos PRs #14, #15 e #16; a estratégia de merge foi mista (#1, #5 e #7 com *merge commit*). Detalhes em 3.2.1.
 - A verificação pós-deploy por versão só vale a partir da primeira release posterior à correção F-06 (3.3.1).
 

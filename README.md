@@ -127,7 +127,7 @@ Em pull requests para a `main` rodam Commit e Aceitação. Uma etapa só roda se
 3. Rode `npm run build` e `npm test` antes de abrir o pull request.
 4. Abra o pull request para a `main`, citando a issue (`Closes #N`), e peça revisão a outro integrante. Merge somente por *squash*.
 
-> **Estado real (verificado em 2026-11-22):** a proteção técnica da `main` **não está ativa** (issue #11) e **nenhum PR até agora tem review registrada no GitHub**. A regra "nenhuma mudança direto na `main`" é, por ora, disciplina do grupo; o plano (3.2.1 e 3.3.2) registra esses desvios.
+> **Estado real:** a proteção da `main` está **ativa desde 2026-11-23** (checks obrigatórios `Etapa de Commit` e `Etapa de Aceitacao`, verificáveis com `gh api repos/<dono>/<repo>/branches/main`; o administrador pode contornar). "PR com 1 aprovação" e o bloqueio de *force-push* e de deleção não aparecem na API para contas sem permissão de administrador; estão comprovados pelo print de *Settings → Branches* em `docs/evidencias/protecao-main.png`. Os PRs #1 a #7 e #13 a #16 (#4 e #15 fechados sem merge) foram integrados **sem review registrada**; a primeira review é a do PR #18. O plano (3.2.1 e 3.3.2) registra esses desvios e `docs/evidencias/protecao-main.md` a verificação.
 
 As convenções completas de nomenclatura e versionamento estão em [docs/plano/secao-introducao-configuracao.md](docs/plano/secao-introducao-configuracao.md).
 
@@ -155,4 +155,4 @@ As convenções completas de nomenclatura e versionamento estão em [docs/plano/
 | Mateus | Teste de aceitação automatizado e sua etapa no pipeline (PR #4, fechado sem merge; integrado pelo #13 com `Co-authored-by`) |
 | Bernardo | Dockerfile e etapa de Lançamento (CD) |
 | Gabriela | README e documentação de como rodar |
-| Rafael | Revisão de código e dos pull requests (papel definido; sem commits ou reviews registrados até 2026-11-22) |
+| Rafael | Revisão de código e dos pull requests (papel definido; sem commits; a primeira review registrada do repositório é dele, no PR #18) |
