@@ -25,8 +25,11 @@ COPY --from=build /app/dist ./dist
 
 # Versao injetada pelo pipeline (tag git); "dev" em builds locais
 ARG APP_VERSION=dev
+ARG VCS_REF=unknown
 ENV APP_VERSION=${APP_VERSION}
-LABEL org.opencontainers.image.version=${APP_VERSION}
+LABEL org.opencontainers.image.version=${APP_VERSION} \
+      org.opencontainers.image.revision=${VCS_REF} \
+      org.opencontainers.image.source="https://github.com/GuilhermeVieira05/tp-gerencia-config"
 
 # Nao roda como root
 USER node

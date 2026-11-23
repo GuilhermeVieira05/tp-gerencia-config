@@ -38,6 +38,8 @@ jobs:
     name: Etapa de Aceitacao
     needs: commit-stage
     runs-on: ubuntu-latest
+    outputs:
+      image_id: ${{ steps.build.outputs.image_id }}
     env:
       BASE_URL: http://localhost:3000
     steps:
@@ -48,11 +50,19 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # Artefato unico: esta e a UNICA construcao da imagem do pipeline.
+      # A versao vem do package.json (a Etapa de Lancamento exige tag == package.json).
       - name: Build da imagem Docker (artefato candidato)
-        run: docker build -t app:acceptance --build-arg APP_VERSION=${{ github.sha }} .
+        id: build
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          docker build -t app:candidate \
+            --build-arg APP_VERSION="$VERSION" \
+            --build-arg VCS_REF="${{ github.sha }}" .
+          echo "image_id=$(docker image inspect app:candidate --format '{{.Id}}')" >> "$GITHUB_OUTPUT"
 
       - name: Subir conteiner
-        run: docker run -d --name app -p 3000:3000 app:acceptance
+        run: docker run -d --name app -p 3000:3000 app:candidate
 
       - name: Aguardar aplicacao (health)
         run: |
@@ -65,6 +75,16 @@ jobs:
 
       - name: Testes de aceitacao
         run: npm run test:acceptance
+
+      - name: Salvar imagem aprovada (artefato para o Lancamento)
+        run: docker save app:candidate | gzip > app-image.tar.gz
+
+      - name: Publicar artefato da imagem
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-image
+          path: app-image.tar.gz
+          retention-days: 7
 
       - name: Logs do conteiner (em caso de falha)
         if: failure()
@@ -104,7 +124,23 @@ jobs:
           echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
           echo "image=${REGISTRY}/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
 
-      - uses: docker/setup-buildx-action@v3
+      - name: Baixar a imagem aprovada na Aceitacao
+        uses: actions/download-artifact@v4
+        with:
+          name: app-image
+
+      - name: Carregar imagem e conferir que e a mesma testada
+        env:
+          EXPECTED_ID: ${{ needs.acceptance-stage.outputs.image_id }}
+        run: |
+          gunzip -c app-image.tar.gz | docker load
+          ACTUAL="$(docker image inspect app:candidate --format '{{.Id}}')"
+          echo "Imagem testada na Aceitacao: $EXPECTED_ID"
+          echo "Imagem carregada no Lancamento: $ACTUAL"
+          if [ "$EXPECTED_ID" != "$ACTUAL" ]; then
+            echo "::error::A imagem do Lancamento difere da testada na Aceitacao."
+            exit 1
+          fi
 
       - name: Login no GHCR
         uses: docker/login-action@v3
@@ -113,7 +149,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Metadados da imagem (tags e labels)
+      - name: Metadados da imagem (tags)
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -124,19 +160,9 @@ jobs:
             type=sha,prefix=sha-
             type=raw,value=latest
 
-      - name: Build da imagem (local, para smoke test)
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          load: true
-          tags: app:smoke
-          build-args: APP_VERSION=${{ steps.version.outputs.version }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
       - name: Smoke test do conteiner
         run: |
-          docker run -d --name smoke -p 3000:3000 app:smoke
+          docker run -d --name smoke -p 3000:3000 app:candidate
           for i in $(seq 1 15); do
             if curl -fsS http://localhost:3000/health; then
               docker rm -f smoke; exit 0
@@ -146,15 +172,15 @@ jobs:
           docker logs smoke
           exit 1
 
-      - name: Publicar imagem no GHCR
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: APP_VERSION=${{ steps.version.outputs.version }}
-          cache-from: type=gha
+      # Sem rebuild: as tags apontam para a mesma imagem (mesmo ID) testada na Aceitacao.
+      - name: Publicar a mesma imagem no GHCR
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          for t in $TAGS; do
+            docker tag app:candidate "$t"
+            docker push "$t"
+          done
 
       - name: Criar GitHub Release
         env:

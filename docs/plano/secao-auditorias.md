@@ -35,3 +35,9 @@
 | Nº | Data | Commit | Resultado |
 |---|---|---|---|
 | 1 | 2026-11-22 | `cbce85e` | Relatório em `docs/auditoria_configuracao.md`: aceitação fora da `main` e seções do plano faltantes; correções aplicadas na branch `fix/aceitacao-e-plano` |
+| 2 | 2026-11-22 | `d042f02` | Relatório em `docs/auditoria_rodada2.md`: faltavam backup/retenção/recuperação (3.3.1), prova de bloqueio do pipeline e artefato único. Corrigidos: seção de backup com teste de recuperação, imagem construída uma só vez e reaproveitada no Lançamento, plano alinhado ao pipeline. Pendentes de ação externa: proteção da `main` e execução vermelha |
+
+**Desvios conhecidos (registrados na auditoria 2):**
+
+- Os PRs #1 a #7 foram abertos antes de o grupo registrar issues. A rastreabilidade issue → PR vale a partir do PR #13; os anteriores são rastreados pelo número do PR e pelo histórico de commits.
+- A proteção técnica da `main` depende de configuração no GitHub (issue #11). Enquanto não estiver ativa, o cumprimento de "só por PR" é disciplina do grupo, verificável no histórico (`git log --first-parent main`).
