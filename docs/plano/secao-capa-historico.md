@@ -16,7 +16,7 @@
 | 2026-11-18 | 0.2 | Estratégia de testes e qualidade e aceitação | Carlos, Mateus |
 | 2026-11-19 | 0.3 | Release e implantação | Bernardo |
 | 2026-11-22 | 0.4 | Introdução, itens de configuração, nomenclatura e versionamento | Gabriela |
-| 2026-11-22 | 1.0 | Controle de mudanças e CCB, auditorias, marcos, treinamento e subfornecedores; capa e histórico | Rafael, Gabriela |
+| 2026-11-22 | 1.0 | Controle de mudanças e CCB, auditorias, marcos, treinamento e subfornecedores; capa e histórico | Marcos (registro no Git) |
 
 ## Índice
 

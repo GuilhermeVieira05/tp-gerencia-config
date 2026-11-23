@@ -77,9 +77,14 @@ describe('createHealthRouter', () => {
   it('registra apenas GET /health', () => {
     expect(routes.map((r) => r.key)).toEqual(['GET /health']);
   });
-  it('responde status ok', () => {
+  it('responde status ok com a versao recebida', () => {
+    const res = mockResponse();
+    routesOf(createHealthRouter('1.2.3'))[0].handle(mockRequest(), res);
+    expect(res.json).toHaveBeenCalledWith({ status: 'ok', version: '1.2.3' });
+  });
+  it('sem versao informada, usa APP_VERSION ou "dev"', () => {
     const res = mockResponse();
     routes[0].handle(mockRequest(), res);
-    expect(res.json).toHaveBeenCalledWith({ status: 'ok' });
+    expect(res.json).toHaveBeenCalledWith({ status: 'ok', version: process.env.APP_VERSION ?? 'dev' });
   });
 });

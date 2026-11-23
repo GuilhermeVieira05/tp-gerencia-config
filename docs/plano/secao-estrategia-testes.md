@@ -11,14 +11,14 @@ Garantir que cada commit na `main` tenha o comportamento verificado automaticame
        ╱ ╲
       ╱   ╲ Integração (55 casos, rotas + domínio, em processo)       → Carlos
      ╱     ╲
-    ╱───────╲ Unidade  (116 casos, uma peça por vez, sem rede)        → Marcos e Carlos
+    ╱───────╲ Unidade  (117 casos, uma peça por vez, sem rede)        → Marcos e Carlos
 ```
 
 ## 2. Níveis de teste
 
 | Nível | Pasta | O que exercita | O que fica de fora | Ferramentas | Casos |
 |---|---|---|---|---|---|
-| Unidade | `tests/unit/` | Uma função ou classe isolada. Dependências são substituídas por dublês | Rede, Express, outras camadas | Jest + ts-jest | 116 |
+| Unidade | `tests/unit/` | Uma função ou classe isolada. Dependências são substituídas por dublês | Rede, Express, outras camadas | Jest + ts-jest | 117 |
 | Integração | `tests/integration/` | Rotas HTTP ligadas ao domínio e ao repositório em memória, no mesmo processo | Contêiner, `Dockerfile`, porta real | Jest + `supertest` | 55 |
 | Aceitação | `tests/acceptance/` | A aplicação empacotada, como cliente externo | Código interno (caixa-preta) | Jest + `fetch` | 22 |
 
@@ -67,14 +67,14 @@ O que cada arquivo verifica de importante:
 
 ## 5. Testes de integração
 
-Sobem o app completo (`createApp`) com repositório em memória e chamam as rotas por `supertest`.
+Sobem o app completo (`createApp`) com repositório em memória e chamam as rotas por `supertest`. Verificam a comunicação entre as **camadas reais** da aplicação: HTTP (Express, validação e tratamento de erros), serviço de domínio e repositório em memória. **Não há banco de dados nem serviço externo** neste projeto; por isso a integração é entre camadas, em processo, e não com infraestrutura. O que usa o sistema empacotado é o teste de aceitação.
 
 | Arquivo | Casos | Foco |
 |---|---|---|
 | `tasks.test.ts` | 20 | Caminho feliz de cada rota (criar, listar com filtros, resumo, consultar, editar, mudar status, remover) |
 | `errors.test.ts` | 31 | 400 (corpo, filtros, status), 404 (id, rota, método), JSON malformado, corpo grande (413) e falha inesperada (500) |
 | `task-flow.test.ts` | 3 | Jornada que atravessa várias rotas e confere o estado a cada passo, inclusive tarefa que vence o prazo |
-| `health.test.ts` | 1 | `GET /health` |
+| `health.test.ts` | 1 | `GET /health` (status e versão) |
 
 Como os testes ficam determinísticos:
 

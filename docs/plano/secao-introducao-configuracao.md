@@ -139,7 +139,7 @@ Identificadores no código ficam em inglês. Comentários, documentação, nomes
 
 | Branch | Regra | Vida útil |
 |---|---|---|
-| `main` | Única branch permanente. Sempre compilável e com testes verdes. Protegida: só recebe mudanças por PR | Permanente |
+| `main` | Única branch permanente. Sempre compilável e com testes verdes. Regra: só recebe mudanças por PR (a proteção técnica ainda não está ativa; ver 3.2.1 e 3.3.2) | Permanente |
 | De trabalho | `<autor>/<assunto>`, em minúsculas, `kebab-case`, sem acentos | Até o merge do PR. Depois é apagada |
 
 Exemplos do histórico: `carlos/camada-http-testes`, `mateus/teste-aceitacao`, `gabriela/readme-plano`.
@@ -169,7 +169,7 @@ Exemplos do histórico: `feat: camada de dominio (tarefas) com testes unitarios 
 
 ### 3.4 Pull requests
 
-- Título no mesmo padrão do commit (`<tipo>: <descrição>`). No merge por *squash*, o título vira a mensagem do commit na `main`, com o número do PR no final (ex.: `(#6)`).
+- Título no mesmo padrão do commit (`<tipo>: <descrição>`). No merge por *squash* (único método para os próximos PRs; os PRs #1, #5 e #7 foram *merge commit*), o título vira a mensagem do commit na `main`, com o número do PR no final (ex.: `(#6)`).
 - A descrição explica o que mudou, por quê, como foi testado e se algum IC fora do Git (seção 2.4) foi alterado.
 
 ### 3.5 Tags, releases e imagens
@@ -243,6 +243,7 @@ Cada tag `vX.Y.Z` na `main` é uma **baseline de release**: congela o estado de 
 |---|---|---|---|
 | `v0.1.0` | 17/11/2026 | `e832342` | Scaffold da API, pipeline (Commit), camada de domínio com testes, `Dockerfile` e etapa de Lançamento |
 | `v0.1.1` | 19/11/2026 | `886f61f` | Etapa de Lançamento idempotente em re-run, camada HTTP com testes de unidade e integração |
+| `v0.1.2` | 22/11/2026 | `69b137f` | Etapa de Aceitação no pipeline, script de implantação, artefato único (imagem testada = imagem lançada), plano consolidado, slides, backup e recuperação, evidência da execução vermelha |
 
 Regras para uma baseline:
 

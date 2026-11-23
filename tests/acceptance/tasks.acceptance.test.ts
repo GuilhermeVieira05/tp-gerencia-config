@@ -79,10 +79,17 @@ beforeAll(async () => {
 });
 
 describe('CA01 - Disponibilidade', () => {
-  it('Dado a aplicacao implantada, Quando consulto /health, Entao recebo 200 e status ok', async () => {
-    const res = await api<{ status: string }>('GET', '/health');
+  it('Dado a aplicacao implantada, Quando consulto /health, Entao recebo 200, status ok e a versao', async () => {
+    const res = await api<{ status: string; version: string }>('GET', '/health');
     expect(res.status).toBe(200);
     expect(res.body).toMatchObject({ status: 'ok' });
+    expect(typeof res.body.version).toBe('string');
+    expect(res.body.version.length).toBeGreaterThan(0);
+    // No pipeline, EXPECTED_VERSION e a versao do package.json: prova que o conteiner
+    // testado foi construido com a versao que sera lancada.
+    if (process.env.EXPECTED_VERSION) {
+      expect(res.body.version).toBe(process.env.EXPECTED_VERSION);
+    }
   });
 });
 

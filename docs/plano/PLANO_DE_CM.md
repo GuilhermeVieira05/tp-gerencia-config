@@ -5,7 +5,7 @@
 | **Organização** | Grupo do TP1 · Gerência de Configuração e Evolução de Software |
 | **Projeto** | tp-gerencia-config: API REST de gerenciamento de tarefas |
 | **Repositório** | https://github.com/GuilhermeVieira05/tp-gerencia-config |
-| **Versão do plano** | 1.1 |
+| **Versão do plano** | 1.2 |
 | **Modelo** | Plano de Gerenciamento de Configuração (RUP) |
 
 ## Histórico de revisão
@@ -16,8 +16,9 @@
 | 2026-11-18 | 0.2 | Estratégia de testes e qualidade e aceitação | Carlos, Mateus |
 | 2026-11-19 | 0.3 | Release e implantação | Bernardo |
 | 2026-11-22 | 0.4 | Introdução, itens de configuração, nomenclatura e versionamento | Gabriela |
-| 2026-11-22 | 1.0 | Controle de mudanças e CCB, auditorias, marcos, treinamento e subfornecedores; capa e histórico | Rafael, Gabriela |
+| 2026-11-22 | 1.0 | Controle de mudanças e CCB, auditorias, marcos, treinamento e subfornecedores; capa e histórico | Marcos (registro no Git) |
 | 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |
+| 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |
 
 ## Índice
 
@@ -117,7 +118,21 @@ O grupo tem sete integrantes, trabalhando de forma remota sobre um repositório 
 | Camada HTTP e testes de integração | Carlos | Camada HTTP, testes de unidade e de integração |
 | Documentação | Gabriela | README, guia de execução, introdução e identificação de configuração |
 
-**Interfaces:** o código entra pela `main` por PR; o pipeline é a interface entre o desenvolvimento e a operação (GitHub Actions → GHCR → Render); o professor avalia o plano, o repositório e a apresentação.
+**Papéis × registro no Git.** A tabela acima é o **papel definido**. O que o histórico mostra (verificado em 2026-11-22, commit `69b137f`; `git log` e GitHub) é:
+
+| Integrante | Registro no Git e no GitHub |
+|---|---|
+| Guilherme | 1 commit (estrutura inicial da API e etapa de Commit do pipeline); dono do repositório |
+| Marcos | Camada de domínio e testes de unidade; PRs #13, #14 e #16 (integração da Aceitação, script de implantação, plano consolidado, artefato único, slides, release `v0.1.2`) |
+| Carlos | PR #5: camada HTTP, testes de unidade e de integração |
+| Mateus | Autor dos 3 commits do PR #4 (etapa de Aceitação e os 22 cenários), fechado sem merge; o conteúdo foi integrado pelo PR #13 (squash), onde consta como `Co-authored-by` |
+| Bernardo | PRs #2, #3 e #6: `Dockerfile`, etapa de Lançamento, idempotência e release `v0.1.1` |
+| Gabriela | PR #7: README, guia de execução e a introdução do plano |
+| Rafael | Nenhum commit, PR ou review registrado até esta data |
+
+Onde a prática difere do papel definido, vale esta tabela. Em especial, **não há reviews de PR registradas** (3.2.1).
+
+**Interfaces:** o código deve entrar pela `main` por PR; o pipeline é a interface entre o desenvolvimento e a operação (GitHub Actions → GHCR → Render); o professor avalia o plano, o repositório e a apresentação.
 
 ### 2.2 Ferramentas, ambiente e infraestrutura
 
@@ -140,7 +155,7 @@ O grupo tem sete integrantes, trabalhando de forma remota sobre um repositório 
 | Integração contínua | Runner `ubuntu-latest` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
 | Produção | Render, `https://tp-gerencia-config.onrender.com` | Sistema entregue aos usuários |
 
-**Volume e distribuição:** repositório pequeno (48 arquivos versionados), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
+**Volume e distribuição:** repositório pequeno (**60** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
 
 ## 3. O Programa de Gerenciamento de Configuração
 
@@ -223,7 +238,7 @@ Identificadores no código ficam em inglês. Comentários, documentação, nomes
 
 | Branch | Regra | Vida útil |
 |---|---|---|
-| `main` | Única branch permanente. Sempre compilável e com testes verdes. Protegida: só recebe mudanças por PR | Permanente |
+| `main` | Única branch permanente. Sempre compilável e com testes verdes. Regra: só recebe mudanças por PR (a proteção técnica ainda não está ativa; ver 3.2.1 e 3.3.2) | Permanente |
 | De trabalho | `<autor>/<assunto>`, em minúsculas, `kebab-case`, sem acentos | Até o merge do PR. Depois é apagada |
 
 Exemplos do histórico: `carlos/camada-http-testes`, `mateus/teste-aceitacao`, `gabriela/readme-plano`.
@@ -253,7 +268,7 @@ Exemplos do histórico: `feat: camada de dominio (tarefas) com testes unitarios 
 
 ###### Pull requests
 
-- Título no mesmo padrão do commit (`<tipo>: <descrição>`). No merge por *squash*, o título vira a mensagem do commit na `main`, com o número do PR no final (ex.: `(#6)`).
+- Título no mesmo padrão do commit (`<tipo>: <descrição>`). No merge por *squash* (único método para os próximos PRs; os PRs #1, #5 e #7 foram *merge commit*), o título vira a mensagem do commit na `main`, com o número do PR no final (ex.: `(#6)`).
 - A descrição explica o que mudou, por quê, como foi testado e se algum IC fora do Git (em "Itens de configuração fora do Git", 3.1.1) foi alterado.
 
 ###### Tags, releases e imagens
@@ -339,6 +354,7 @@ Cada tag `vX.Y.Z` na `main` é uma **baseline de release**: congela o estado de 
 |---|---|---|---|
 | `v0.1.0` | 17/11/2026 | `e832342` | Scaffold da API, pipeline (Commit), camada de domínio com testes, `Dockerfile` e etapa de Lançamento |
 | `v0.1.1` | 19/11/2026 | `886f61f` | Etapa de Lançamento idempotente em re-run, camada HTTP com testes de unidade e integração |
+| `v0.1.2` | 22/11/2026 | `69b137f` | Etapa de Aceitação no pipeline, script de implantação, artefato único (imagem testada = imagem lançada), plano consolidado, slides, backup e recuperação, evidência da execução vermelha |
 
 Regras para uma baseline:
 
@@ -355,7 +371,7 @@ O procedimento para criar uma release está em 3.3.1 e a auditoria das baselines
 
 #### 3.2.1 Processamento e aprovação de controles de mudança
 
-Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfile`, documentação) segue o mesmo caminho. Não há commit direto na `main`.
+Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfile`, documentação) deve seguir o caminho abaixo, que é o **procedimento definido**. O que foi **efetivamente praticado** até aqui, e onde difere do definido, está em "Procedimento definido × prática realizada", ao fim desta seção. Regra: não há commit direto na `main`.
 
 | Passo | O que acontece | Quem | Registro |
 |---|---|---|---|
@@ -366,7 +382,7 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 | 5. Pull request | Título no padrão do commit, descrição com o quê, por quê e como foi testado, e `Closes #N` | Responsável | PR |
 | 6. Verificação automática | O pipeline roda a Etapa de Commit e a de Aceitação; ambas precisam estar verdes | GitHub Actions | Execução do workflow |
 | 7. Revisão | Um revisor que **não seja o autor** aprova ou pede mudanças | Revisor (Rafael por padrão) | Review no PR |
-| 8. Integração | Merge por *squash* na `main`; a branch é apagada | Autor, após aprovação | Commit na `main` com `(#N)` |
+| 8. Integração | Merge por *squash* na `main` (regra para os próximos PRs; ver "Estratégia de merge"); a branch é apagada | Autor, após aprovação | Commit na `main` com `(#N)` |
 | 9. Release (se aplicável) | Atualiza-se `package.json`, cria-se a tag `vX.Y.Z` e o pipeline publica a imagem | Bernardo | Tag, GitHub Release, imagem no GHCR |
 
 **Critérios de aprovação de um PR:** pipeline verde; ao menos 1 aprovação de outro integrante; mensagem no padrão; testes novos para comportamento novo; documentação atualizada quando o contrato da API ou um IC muda; nenhum segredo no diff.
@@ -375,7 +391,25 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 
 **Rastreabilidade:** issue → branch → commits → PR → commit na `main` → tag → imagem (`APP_VERSION` e labels OCI) → release. Com isso é possível ir de uma versão em execução até o pedido que a originou.
 
-**Proteção técnica da `main`:** exige PR, a aprovação mencionada e os status checks "Etapa de Commit" e "Etapa de Aceitação". A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2).
+**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks "Etapa de Commit" e "Etapa de Aceitação", e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado verificado em 2026-11-22: não está ativa** (ver abaixo).
+
+#### Procedimento definido × prática realizada
+
+Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commit `69b137f`:
+
+| Tema | Definido neste plano | Realizado até 2026-11-22 |
+|---|---|---|
+| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Não ativa.** A API de proteção retorna 404 e não há *rulesets*. A conta que executa a verificação não é administradora do repositório; a ativação cabe ao dono (Guilherme). Issue #11 permanece **aberta** até a regra existir e ser conferida |
+| Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada no GitHub nos 11 PRs** (#1 a #7, #13 a #16, contando os fechados sem merge #4 e #15). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
+| Quem revisa | Rafael, por padrão | Rafael não tem commit, PR ou review registrados até esta data |
+| Issue → PR (`Closes #N`) | Todo PR referencia uma issue | PRs #1 a #7 anteriores às issues; só o #13 tem `Closes #N`; #14, #15 e #16 não têm; a rodada de correção usa a issue #17 |
+| Estratégia de merge | *Squash* | Mista: *merge commit* nos PRs #1, #5 e #7; *squash* nos PRs #2, #3, #6, #13, #14 e #16 (PRs #4 e #15 fechados sem merge) |
+
+**Estratégia de merge:** para os próximos PRs vale **somente *squash***: um commit por PR na `main`, com `(#N)` no título. Os PRs #1, #5 e #7 permanecem como *merge commit*; o histórico não é reescrito. A restrição técnica (desabilitar *merge commit* e *rebase* em *Settings → General*) também depende do dono do repositório.
+
+**Rastreabilidade a partir daqui:** todo PR novo cita a issue que o originou (`Closes #N`, ou `Refs #N` quando a issue deve continuar aberta). Os PRs sem vínculo listados acima não são corrigidos retroativamente; são rastreados pelo número do PR e pelo histórico de commits.
+
+**Revisão a partir daqui:** a aprovação de outro integrante deve ficar registrada como *review* no GitHub. Um PR integrado sem *review* registra o desvio na sua descrição.
 
 #### 3.2.2 CCB (Comitê de Controle de Configuração)
 
@@ -388,12 +422,14 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 
 **Quórum:** 3 membros, sendo o autor da mudança excluído do voto. **Decisão:** maioria simples; empate resolvido pelo presidente.
 
-**Procedimento:**
+**Procedimento (definido):**
 1. Mudanças comuns são decididas no próprio PR: a aprovação do revisor registra a decisão do CCB.
 2. Mudanças que afetam **contrato da API, pipeline, `Dockerfile`, versionamento ou baseline** exigem aprovação explícita de pelo menos 2 membros do CCB no PR.
 3. **Criação de baseline (tag):** só com aprovação do presidente e do responsável por releases, pipeline verde na `main` e `package.json` na versão da tag.
 4. Reuniões: curtas, ao fim de cada marco (ver "Versionamento", em 3.1.1), para revisar issues abertas e a pauta da próxima baseline. A ata fica como comentário na issue do marco.
 5. Mudanças rejeitadas ficam registradas na issue com a justificativa.
+
+**Prática até 2026-11-22:** não há atas, votações nem aprovações do CCB registradas; o único registro de verificação das mudanças é o resultado do pipeline. As três tags criadas (`v0.1.0` a `v0.1.2`) também não têm registro de aprovação do presidente e do responsável por releases além da própria tag anotada e do GitHub Release. Daqui em diante, as decisões do CCB são registradas no PR ou na issue correspondente.
 
 ### 3.3 Contabilidade do status de configuração
 
@@ -463,6 +499,7 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 ###### Gatilho e política de release
 
 - **Push na `main`** roda apenas Commit e Aceitação: valida a integração contínua, mas não implanta.
+- **Decisão de projeto:** o Lançamento por tag é **entrega contínua** (o sistema está sempre pronto para ser liberado, e a tag é a decisão humana de liberar a baseline). **Implantação contínua** seria publicar em produção a cada merge na `main`; o grupo não a adotou, para que cada versão em produção corresponda a uma baseline identificada. Consequência: o último commit da `main` mostra o Lançamento como *skipped*; a execução completa das três etapas está na execução da tag (por exemplo, `v0.1.2`, run 45093771847).
 - **Push de tag `vX.Y.Z`** roda o pipeline completo, incluindo o Lançamento.
 - O job só executa se as etapas anteriores passarem (`needs`). Uma tag criada sobre um commit quebrado não gera release.
 - A tag deve ser igual à versão do `package.json` (`v` + `version`). Se forem diferentes, o primeiro passo do job falha. Assim, a versão declarada no código e a versão publicada nunca divergem.
@@ -496,7 +533,7 @@ A imagem também carrega a variável de ambiente `APP_VERSION` e labels OCI (`or
 | Publicar no GHCR | Aplica as tags de "Versionamento do artefato" (`docker tag`) à **mesma** imagem e faz push, sem reconstruir | Falha de autenticação ou de rede |
 | GitHub Release | Cria a release com notas geradas a partir dos commits/PRs. Num re-run, mantém a existente | Falha na API do GitHub |
 | Deploy no Render | Chama o deploy hook com `imgURL` apontando para `X.Y.Z` | Secret ausente ou hook inválido |
-| Verificar implantação | Faz polling de `RENDER_APP_URL/health` por até 5 min | Produção não responde |
+| Verificar implantação | `scripts/deploy.sh` consulta `RENDER_APP_URL/health` (30 tentativas a cada 10 s, com timeout por requisição) e só passa quando o campo `version` é igual a `X.Y.Z` | `RENDER_APP_URL` ausente, versão diferente ou sem resposta no prazo |
 
 O smoke test acontece **antes** do push. Uma imagem que nem sobe nunca chega ao registro.
 
@@ -536,8 +573,8 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 ###### Problemas conhecidos
 
 - O plano gratuito do Render hiberna o serviço após inatividade. A primeira requisição pode levar até ~1 min, o que a verificação pós-deploy tolera.
-- `/health` não informa a versão. Por isso a verificação pós-deploy confirma que a aplicação está no ar, mas não que a versão nova já substituiu a anterior. Uma melhoria possível é incluir `APP_VERSION` na resposta de `/health` (camada HTTP).
-- **Artefato único:** a imagem é construída uma só vez, na Aceitação, e passada ao Lançamento como artefato do workflow (`app-image`, retenção de 7 dias). O Lançamento confere o ID da imagem antes de publicar. Se o artefato expirar, é preciso reexecutar o pipeline da tag.
+- **Verificação por versão (desde o PR da rodada final de correção):** `/health` devolve `{status, version}` e o `deploy.sh` só aceita o deploy quando `version` bate com a tag. As releases `v0.1.0` a `v0.1.2` foram implantadas **antes** dessa mudança: a instância atual no Render ainda responde `/health` sem `version`, e nelas a verificação só provou que a aplicação estava no ar, não que a versão nova a substituíra (no log da `v0.1.2`, "OK na tentativa 1"). A verificação por versão passa a valer na primeira release criada depois da integração desse PR.
+- **Artefato único:** a imagem é construída uma só vez, na Aceitação, e passada ao Lançamento como artefato do workflow (`app-image`, retenção de 7 dias). O Lançamento confere o ID da imagem antes de publicar. Se o artefato expirar, é preciso reexecutar o pipeline da tag. O `npm run build` (`tsc`) da Etapa de Commit é uma **validação de compilação** e não gera o artefato entregue: o artefato que segue da Aceitação para o Lançamento é a **imagem Docker**, cujo estágio de build compila o TypeScript de novo dentro do `Dockerfile`. Não se afirma, portanto, que o `dist/` do Commit seja o binário entregue; o que se garante é que a imagem lançada é a mesma (mesmo ID) que passou na Aceitação.
 - O Lançamento só roda em tag (a tag é a baseline). Push na `main` executa apenas Commit e Aceitação.
 
 #### 3.3.2 Relatórios e auditorias
@@ -567,10 +604,10 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 - [ ] Pipeline verde com Commit, Aceitação e Lançamento
 - [ ] Tag `vX.Y.Z` igual a `package.json` e com GitHub Release
 - [ ] Imagem `ghcr.io/guilhermevieira05/tp-gerencia-config:X.Y.Z` existe e `/health` responde no Render
-- [ ] Proteção da `main` ativa (print em `docs/evidencias/`)
+- [ ] Proteção da `main` ativa (`gh api repos/<dono>/<repo>/branches/main/protection` responde 200; print em `docs/evidencias/`)
 - [ ] Toda PR mesclada referencia uma issue
 
-**Registro:** o resultado vai em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md`, com data, commit auditado, achados e correções.
+**Registro:** o resultado de cada rodada vai em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md` (rodada 1), `docs/auditoria_rodada2.md` (rodada 2) e `docs/auditoria_rodada3.md` (rodada 3), com data, commit auditado, achados e correções. Os relatórios são históricos: descrevem o estado do commit auditado, não o atual.
 
 **Auditorias realizadas**
 
@@ -579,10 +616,15 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 | 1 | 2026-11-22 | `cbce85e` | Relatório em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md`: aceitação fora da `main` e seções do plano faltantes; correções aplicadas na branch `fix/aceitacao-e-plano` |
 | 2 | 2026-11-22 | `d042f02` | Relatório em `docs/auditoria_rodada2.md`: faltavam backup/retenção/recuperação (3.3.1), prova de bloqueio do pipeline e artefato único. Corrigidos: seção de backup com teste de recuperação, imagem construída uma só vez e reaproveitada no Lançamento, plano alinhado ao pipeline. Execução vermelha registrada em `docs/evidencias/execucao-vermelha.md` (run 45093573497) |
 
-**Desvios conhecidos (registrados na auditoria 2):**
+| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório em `docs/auditoria_rodada3.md`. Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções na branch `marcos/correcao-final` (issue #17) |
+
+**Desvios conhecidos (registrados nas auditorias 2 e 3):**
 
 - Os PRs #1 a #7 foram abertos antes de o grupo registrar issues. A rastreabilidade issue → PR vale a partir do PR #13; os anteriores são rastreados pelo número do PR e pelo histórico de commits.
-- A proteção técnica da `main` depende de configuração no GitHub (issue #11). Enquanto não estiver ativa, o cumprimento de "só por PR" é disciplina do grupo, verificável no histórico (`git log --first-parent main`).
+- **A proteção técnica da `main` não está ativa** (verificado na auditoria 3: API de proteção 404, sem *rulesets*). Depende do dono do repositório (issue #11, aberta). Enquanto isso, "só por PR" é disciplina do grupo, verificável no histórico (`git log --first-parent main`).
+- **Nenhum dos 11 PRs tem review registrada**; ver "Procedimento definido × prática realizada" em 3.2.1.
+- A regra `Closes #N` não foi aplicada nos PRs #14, #15 e #16; a estratégia de merge foi mista (#1, #5 e #7 com *merge commit*). Detalhes em 3.2.1.
+- A verificação pós-deploy por versão só vale a partir da primeira release posterior à correção F-06 (3.3.1).
 
 ## 4. Marcos
 
@@ -680,7 +722,7 @@ Contagem do código de produção (`src/`), feita pelo script `scripts/contar-re
 
 | Nível | Pasta | O que exercita | O que fica de fora | Ferramentas | Casos |
 |---|---|---|---|---|---|
-| Unidade | `tests/unit/` | Uma função ou classe isolada. Dependências são substituídas por dublês | Rede, Express, outras camadas | Jest + ts-jest | 116 |
+| Unidade | `tests/unit/` | Uma função ou classe isolada. Dependências são substituídas por dublês | Rede, Express, outras camadas | Jest + ts-jest | 117 |
 | Integração | `tests/integration/` | Rotas HTTP ligadas ao domínio e ao repositório em memória, no mesmo processo | Contêiner, `Dockerfile`, porta real | Jest + `supertest` | 55 |
 | Aceitação | `tests/acceptance/` | A aplicação empacotada, como cliente externo | Código interno (caixa-preta) | Jest + `fetch` | 22 |
 
@@ -696,7 +738,7 @@ Cada critério vira um bloco `describe` no código, com cenários no formato **D
 
 | ID | Critério | Cenários |
 |---|---|---|
-| CA01 | A aplicação implantada responde ao health check | `/health` → 200 `{status: "ok"}` |
+| CA01 | A aplicação implantada responde ao health check | `/health` → 200 `{status: "ok", version}`; no pipeline, `version` deve ser igual à do `package.json` |
 | CA02 | O usuário cria tarefas e entradas inválidas são recusadas | Criação com padrões (`todo`, `medium`) → 201; todos os campos → 201; sem título, título em branco, título > 100 caracteres, prioridade inválida, data inválida → 400 |
 | CA03 | O usuário consulta e filtra tarefas | Por id → 200; id inexistente → 404; filtro por prioridade; filtro por status |
 | CA04 | O usuário edita uma tarefa sem perder os outros campos | Edição parcial → 200 e campos não enviados preservados; título inválido → 400 sem alterar a tarefa; id inexistente → 404 |
@@ -750,10 +792,10 @@ push na main / PR / tag vX.Y.Z
 [1. COMMIT]    npm ci -> build -> testes de unidade -> testes de integração
    |  (falhou? nada avança)
    v
-[2. ACEITAÇÃO] constrói a imagem UMA vez -> sobe o contêiner -> 22 testes via HTTP -> salva a imagem como artefato
+[2. ACEITAÇÃO] constrói a imagem UMA vez -> sobe o contêiner -> 22 cenários via HTTP -> salva a imagem como artefato
    |  (falhou? não há lançamento)
    v
-[3. LANÇAMENTO] (só em tag) carrega a MESMA imagem, confere o ID -> smoke test -> GHCR -> GitHub Release -> deploy.sh -> /health
+[3. LANÇAMENTO] (só em tag) carrega a MESMA imagem, confere o ID -> smoke test -> GHCR -> GitHub Release -> deploy.sh -> /health com a versão esperada
 ```
 
 | Seção do plano | Onde aparece no pipeline |
@@ -765,5 +807,5 @@ push na main / PR / tag vX.Y.Z
 | 3.3.2 Auditoria | Registros de execução; artefato único (ID conferido) |
 | 6 Fornecedores | `npm ci` com lockfile; imagens e actions com versão fixada |
 
-**Artefato único:** a imagem é construída apenas na Aceitação. O Lançamento a recebe como artefato do workflow, compara o ID com o testado e só então aplica as tags e publica. O mesmo `scripts/deploy.sh` entregue ao professor é o chamado pelo pipeline.
+**Artefato único:** a imagem Docker é construída apenas na Aceitação (o `tsc` da Etapa de Commit é só validação de compilação). O Lançamento a recebe como artefato do workflow, compara o ID com o testado e só então aplica as tags e publica. O mesmo `scripts/deploy.sh` entregue ao professor é o chamado pelo pipeline.
 

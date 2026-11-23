@@ -58,7 +58,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
         <tr><th>Requisito</th><th>Mínimo</th><th>Real</th></tr>
         <tr><td>Arquivos (P-01)</td><td>10</td><td><b>12</b></td></tr>
         <tr><td>Funções/métodos (P-02)</td><td>20</td><td><b>36</b></td></tr>
-        <tr><td>Testes (P-03)</td><td>—</td><td><b>193</b></td></tr>
+        <tr><td>Testes (P-03)</td><td>—</td><td><b>194</b></td></tr>
       </table>
       <p class="small" style="margin-top:12px">Contagem por AST do TypeScript: <code>node scripts/contar-requisitos.js</code>. Não conta construtores nem callbacks.</p>
     </div>
@@ -79,8 +79,8 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
     </div>
     <div class="col box">
       <p><b>Cadeia de rastreabilidade</b></p>
-      <p style="font-size:22px">issue → branch → PR → commit na <code>main</code> → tag <code>v0.1.1</code> → imagem <code>:0.1.1</code> (label <code>revision</code> = SHA) → Release → Render</p>
-      <p class="small">Baselines existentes: <code>v0.1.0</code> e <code>v0.1.1</code></p>
+      <p style="font-size:22px">issue → branch → PR → commit na <code>main</code> → tag <code>v0.1.2</code> → imagem <code>:0.1.2</code> (label <code>revision</code> = SHA) → Release → Render</p>
+      <p class="small">Baselines: <code>v0.1.0</code>, <code>v0.1.1</code>, <code>v0.1.2</code>. Issue → PR vale após o PR #7 (e não nos #14 e #16)</p>
     </div>
   </div>
 </section>
@@ -92,13 +92,14 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
       <ol style="font-size:23px;line-height:1.4;padding-left:28px;margin:0">
         <li>Issue (pedido)</li><li>Triagem pelo CCB</li><li>Branch <code>autor/assunto</code></li>
         <li>PR com <code>Closes #N</code></li><li>Pipeline verde (Commit + Aceitação)</li>
-        <li>Revisor que não é o autor</li><li>Merge por squash</li><li>Tag, se for release</li>
+        <li>Revisor que não é o autor</li><li>Merge por squash (exceto #1, #5, #7)</li><li>Tag, se for release</li>
       </ol>
     </div>
     <div class="col box">
-      <p><b>CCB</b> (quórum 3, autor não vota)</p>
+      <p><b>CCB definido</b> (quórum 3, autor não vota)</p>
       <p style="font-size:22px">Presidente (Guilherme) · Gerente de configuração (Rafael) · Responsável por releases (Bernardo) · membro técnico em rodízio</p>
       <p style="font-size:22px">Mudança em <b>contrato, pipeline, Dockerfile ou baseline</b>: 2 aprovações explícitas.</p>
+      <p style="font-size:21px"><b>Na prática até hoje:</b> o portão efetivo foi o pipeline verde. Nenhuma review registrada nos 11 PRs e a proteção da <code>main</code> ainda não está ativa (issue #11). O plano separa o <i>definido</i> do <i>praticado</i>.</p>
     </div>
   </div>
 </section>
@@ -118,18 +119,19 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
 
 <section class="s"><div class="t">4:00–5:30</div>
   <h2>Pipeline de implantação</h2>
-  <p class="small" style="margin-bottom:4px">Gatilho: push na <code>main</code>, pull request e tag <code>vX.Y.Z</code>. A imagem é construída <b>uma só vez</b>.</p>
+  <p class="small" style="margin-bottom:4px">Push na <code>main</code> e PR: Commit + Aceitação. Tag <code>vX.Y.Z</code>: as três etapas. A <b>imagem Docker</b> é construída uma só vez.</p>
   <div class="flow">
-    <div class="stage a"><b>1. Commit</b>npm ci · build · testes de <b>unidade</b> · testes de <b>integração</b> (116 + 55)</div>
+    <div class="stage a"><b>1. Commit</b>npm ci · build · testes de <b>unidade</b> · testes de <b>integração</b> (117 + 55). O <code>tsc</code> aqui valida a compilação</div>
     <div class="arrow">▶</div>
     <div class="stage b"><b>2. Aceitação</b>constrói a imagem · sobe o contêiner · 22 testes caixa-preta via HTTP · salva a imagem</div>
     <div class="arrow">▶</div>
-    <div class="stage c"><b>3. Lançamento</b>(só em tag) carrega a <b>mesma</b> imagem, confere o ID · GHCR · Release · <code>deploy.sh</code> · <code>/health</code></div>
+    <div class="stage c"><b>3. Lançamento</b>(só em tag) carrega a <b>mesma</b> imagem, confere o ID · GHCR · Release · <code>deploy.sh</code> · <code>/health</code> com a versão</div>
   </div>
   <ul style="margin-top:14px">
     <li><code>needs</code> entre as etapas: falha em uma <b>bloqueia</b> as seguintes</li>
     <li>Segredos só no environment <code>production</code>; nenhum no repositório</li>
-    <li>Entrega contínua: a tag é a decisão humana de liberar (baseline)</li>
+    <li><b>Entrega contínua</b>: a tag é a decisão humana de liberar (baseline). <b>Implantação contínua</b> (deploy a cada merge) não adotamos</li>
+    <li>Artefato: a imagem testada na Aceitação é a publicada; o ID é conferido antes</li>
   </ul>
 </section>
 
@@ -138,15 +140,15 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   <div class="row">
     <div class="col">
       <ol style="font-size:24px;line-height:1.45;padding-left:28px;margin:0">
-        <li><b>Verde:</b> execução completa (Commit → Aceitação → Lançamento) numa tag</li>
-        <li><b>Vermelha:</b> PR com teste quebrado → Commit falha, Aceitação e Lançamento ficam <i>skipped</i></li>
+        <li><b>Verde:</b> execução completa da tag <code>v0.1.2</code> (Commit → Aceitação → Lançamento)</li>
+        <li><b>Vermelha:</b> num <b>PR</b> (#15), não na <code>main</code>: Commit falha, Aceitação e Lançamento ficam <i>skipped</i></li>
         <li><b>No ar:</b> <code>/health</code> no Render e <code>docker run</code> da imagem do GHCR</li>
         <li><b>Mesma imagem:</b> log com o ID testado = ID publicado</li>
       </ol>
     </div>
     <div class="col box">
       <p><b>Plano B</b></p>
-      <p style="font-size:22px">Execuções prévias abertas na aba Actions e gravação da demo, caso a rede ou o Render (cold start de até ~1 min) atrapalhem.</p>
+      <p style="font-size:22px">Execuções já concluídas abertas na aba Actions, caso a rede ou o Render (cold start de até ~1 min) atrapalhem.</p>
     </div>
   </div>
 </section>
@@ -163,8 +165,8 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
       </ul>
     </div>
     <div class="col box">
-      <p><b>2 auditorias executadas</b></p>
-      <p style="font-size:21px">Compararam o plano com repositório, pipeline e histórico. Acharam: Aceitação fora da <code>main</code>, seção de backup ausente, imagem reconstruída 3 vezes, afirmações do plano sem prova. Cada achado virou correção rastreada.</p>
+      <p><b>3 auditorias executadas</b></p>
+      <p style="font-size:21px">Compararam o plano com repositório, pipeline e histórico. Acharam: Aceitação fora da <code>main</code>, backup ausente, imagem reconstruída 3 vezes, <code>main</code> sem proteção e PRs sem review, <code>/health</code> sem versão. As correções ficam na issue #17; o que depende do dono do repositório segue aberto.</p>
     </div>
   </div>
 </section>
@@ -176,7 +178,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   <div class="lesson"><b>Imagem testada ≠ imagem publicada.</b>
     <p>Construíamos a imagem 3 vezes. → Agora é 1 build, salvo como artefato; o Lançamento confere o ID. → Teríamos desenhado o artefato único desde o início.</p></div>
   <div class="lesson"><b>Plano e prática divergiram.</b>
-    <p>O plano falava em issues e <code>main</code> protegida antes de existirem. → A auditoria cruzou plano × repositório e registramos os desvios. → Escreveríamos o plano depois do processo funcionar e com issues desde o PR #1.</p></div>
+    <p>O plano descrevia <code>main</code> protegida e revisão de PR que o GitHub não aplicava. → A auditoria cruzou plano × repositório; o plano agora separa o <i>definido</i> do <i>praticado</i>. → Ativaríamos a proteção e as reviews no primeiro dia, com issues desde o PR #1.</p></div>
   <div class="lesson"><b>Dependência entre pessoas.</b>
     <p>A Aceitação só passava com as rotas HTTP prontas. → Fixamos a tabela de rotas como contrato. → Acordaríamos o contrato antes de dividir o trabalho.</p></div>
 </section>
@@ -188,7 +190,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
       <ul>
         <li>CI/CD completo: build, 3 níveis de teste, container, deploy</li>
         <li>Plano que descreve o que existe, e auditado</li>
-        <li>Próximos passos: <code>/health</code> com versão, proteção da <code>main</code> exigindo os 2 checks</li>
+        <li>Próximos passos: nova release com <code>/health</code> informando a versão; proteção da <code>main</code> (issue #11)</li>
       </ul>
     </div>
     <div class="col box">
