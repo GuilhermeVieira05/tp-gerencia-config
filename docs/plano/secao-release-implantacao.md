@@ -9,7 +9,7 @@ A etapa de Lançamento (CD) é a terceira etapa do pipeline em `.github/workflow
 ```
 tag vX.Y.Z  ──▶  Etapa de Commit  ──▶  Etapa de Aceitação  ──▶  Etapa de Lançamento
                  (build + testes)      (teste de aceitação)     ├─ valida versão
-                                                                ├─ build da imagem Docker
+                                                                ├─ carrega a imagem aprovada (sem rebuild)
                                                                 ├─ smoke test do contêiner
                                                                 ├─ publica no GHCR
                                                                 ├─ cria GitHub Release
@@ -82,9 +82,9 @@ curl http://localhost:3000/health
 | Passo | O que faz | Falha quando |
 |---|---|---|
 | Validar tag | Compara a tag com o `package.json` | Versões diferentes |
-| Build local | Constrói a imagem com cache do GitHub Actions | Erro de compilação ou de Docker |
+| Carregar a imagem aprovada | Baixa o artefato `app-image` gerado na Aceitação, faz `docker load` e compara o ID da imagem com o ID testado | IDs diferentes ou artefato ausente |
 | Smoke test | Sobe o contêiner e chama `/health` | Contêiner não responde em ~30 s |
-| Publicar no GHCR | Faz push da imagem com as tags da seção 3 | Falha de autenticação ou de rede |
+| Publicar no GHCR | Aplica as tags da seção 3 (`docker tag`) à **mesma** imagem e faz push, sem reconstruir | Falha de autenticação ou de rede |
 | GitHub Release | Cria a release com notas geradas a partir dos commits/PRs. Num re-run, mantém a existente | Falha na API do GitHub |
 | Deploy no Render | Chama o deploy hook com `imgURL` apontando para `X.Y.Z` | Secret ausente ou hook inválido |
 | Verificar implantação | Faz polling de `RENDER_APP_URL/health` por até 5 min | Produção não responde |
@@ -108,9 +108,9 @@ Regras:
 
 ## 7. Configuração única do ambiente (fazer uma vez)
 
-1. **GHCR**: depois da primeira release, a imagem aparece em *Packages* do repositório. Como o repositório é privado, o pacote também nasce privado.
+1. **GHCR**: depois da primeira release, a imagem aparece em *Packages* do repositório. O repositório é público, mas o pacote do GHCR nasce privado por padrão; confira a visibilidade em *Packages*.
 2. **Render**: criar um *Web Service* → *Existing Image* → `ghcr.io/guilhermevieira05/tp-gerencia-config:latest`.
-   - Como o pacote é privado, cadastrar em *Registry Credentials* um GitHub PAT (classic) com escopo `read:packages`. Outra opção é tornar o pacote público no GHCR.
+   - Se o pacote estiver privado, cadastrar em *Registry Credentials* um GitHub PAT (classic) com escopo `read:packages`. Outra opção é tornar o pacote público no GHCR.
    - Plano *Free*. Health check path: `/health`.
 3. Em *Settings → Deploy Hook* do Render, copiar a URL para o secret `RENDER_DEPLOY_HOOK_URL`.
 4. No GitHub, criar o environment `production`, cadastrar o secret e a variável `RENDER_APP_URL`. Opcionalmente, marcar *Required reviewers* para exigir aprovação manual antes de cada implantação.
@@ -128,4 +128,5 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 
 - O plano gratuito do Render hiberna o serviço após inatividade. A primeira requisição pode levar até ~1 min, o que a verificação pós-deploy tolera.
 - `/health` não informa a versão. Por isso a verificação pós-deploy confirma que a aplicação está no ar, mas não que a versão nova já substituiu a anterior. Uma melhoria possível é incluir `APP_VERSION` na resposta de `/health` (camada HTTP).
-- Enquanto o job de aceitação não entra, o `release-stage` depende diretamente do `commit-stage` (há um `TODO` no workflow para trocar o `needs`).
+- **Artefato único:** a imagem é construída uma só vez, na Aceitação, e passada ao Lançamento como artefato do workflow (`app-image`, retenção de 7 dias). O Lançamento confere o ID da imagem antes de publicar. Se o artefato expirar, é preciso reexecutar o pipeline da tag.
+- O Lançamento só roda em tag (a tag é a baseline). Push na `main` executa apenas Commit e Aceitação.

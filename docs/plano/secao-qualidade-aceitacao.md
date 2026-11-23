@@ -119,10 +119,10 @@ Se qualquer etapa falhar, as seguintes não rodam (`needs`). Uma tag criada sobr
 
 - Execução de cada etapa e logs: aba *Actions* do repositório, por commit.
 - Em falha da aceitação, o job publica os logs do contêiner (`docker logs`) no próprio log do Actions.
-- A imagem testada recebe `APP_VERSION` com o SHA do commit, o que liga o resultado do teste ao commit exato.
+- A imagem testada recebe `APP_VERSION` (versão do `package.json`) e o label OCI `org.opencontainers.image.revision` com o SHA do commit, o que liga o resultado do teste ao commit exato.
 
 ## 8. Limitações conhecidas
 
 - Os dados ficam em memória, então os testes não cobrem persistência nem reinício do servidor (o que está fora do escopo do projeto).
 - O conjunto valida o comportamento funcional. Desempenho, carga e segurança não são testados.
-- A imagem é construída duas vezes no caminho de uma release (na Aceitação e no Lançamento). O cache do Docker reduz o custo. Uma melhoria possível é a etapa de Aceitação publicar a imagem como artefato e a etapa de Lançamento reaproveitá-la, garantindo que o binário testado é exatamente o publicado.
+- A imagem é construída **uma única vez**, na Aceitação, e salva como artefato do workflow (`app-image`). O Lançamento a carrega, confere o ID e publica a mesma imagem. Assim, o que foi testado é exatamente o que é publicado.

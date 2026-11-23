@@ -50,11 +50,12 @@ A camada HTTP usa apenas `TaskService`. Regras de cada operação:
 
 ## 5. Evidência de tamanho (REQ-002 e REQ-003)
 
-Contagem só de código de produção em `src/domain/` (a camada HTTP do Carlos se soma a ela):
+Contagem do código de produção (`src/`), feita pelo script `scripts/contar-requisitos.js`, que usa o compilador do TypeScript (AST):
 
-- **Arquivos:** 5 em `src/domain/` (mais `src/app.ts` e `src/server.ts` já existentes).
-- **Funções e métodos:** 16 (4 em `validation.ts`, 5 em `task-repository.ts`, 7 em `task-service.ts`), sem contar construtores nem o handler de `/health`.
-- **Reprodução:** `git ls-files 'src/*.ts' 'src/**/*.ts' | wc -l` conta os arquivos (depois do commit). Para funções e métodos, o grupo ainda precisa acordar um método de contagem (script ou análise estática) e registrá-lo no plano.
+- **Arquivos:** 12 (mínimo exigido: 10).
+- **Funções e métodos:** 36 (mínimo exigido: 20).
+- **Critério:** contam declarações de função, métodos de classe e funções atribuídas a variável ou propriedade. Não contam construtores nem callbacks anônimos. Testes, dependências e `dist/` ficam fora.
+- **Reprodução:** `node scripts/contar-requisitos.js` (lista por arquivo) e `find src -name '*.ts' | wc -l` (arquivos). O registro está em `docs/contagem_requisitos.md`.
 
 ## 6. Testes de unidade desta metade
 

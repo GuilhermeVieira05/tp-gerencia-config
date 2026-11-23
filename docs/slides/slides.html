@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><title>TP1 · Gerência de Configuração</title>
+<style>
+@page { size: 1280px 720px; margin: 0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; color: #172b4d; }
+.s { width: 1280px; height: 720px; padding: 52px 70px; page-break-after: always; position: relative; background: #fff; overflow: hidden; }
+.s:last-child { page-break-after: auto; }
+h1 { font-size: 52px; margin: 0 0 14px; color: #0b3d6b; }
+h2 { font-size: 40px; margin: 0 0 26px; color: #0b3d6b; border-bottom: 4px solid #2f80c8; padding-bottom: 10px; }
+p, li { font-size: 25px; line-height: 1.38; margin: 0 0 8px; }
+ul { margin: 0; padding-left: 28px; }
+.t { position: absolute; top: 20px; right: 34px; font-size: 15px; color: #7a8aa0; }
+.n { position: absolute; bottom: 16px; right: 34px; font-size: 15px; color: #7a8aa0; }
+.title { background: #0b3d6b; color: #fff; }
+.title h1 { color: #fff; font-size: 60px; margin-top: 150px; }
+.title p { color: #cfe3f7; font-size: 28px; }
+table { border-collapse: collapse; width: 100%; font-size: 21px; }
+th, td { border: 1px solid #c3cfdd; padding: 8px 12px; text-align: left; vertical-align: top; }
+th { background: #e6eef7; }
+code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; border-radius: 4px; font-size: 0.86em; }
+.row { display: flex; gap: 26px; }
+.col { flex: 1; }
+.box { border: 2px solid #2f80c8; border-radius: 12px; padding: 14px 18px; background: #f3f8fd; }
+.flow { display: flex; align-items: stretch; gap: 14px; margin: 14px 0; }
+.stage { flex: 1; border-radius: 12px; padding: 14px 16px; color: #fff; font-size: 21px; line-height: 1.3; }
+.stage b { display: block; font-size: 27px; margin-bottom: 6px; }
+.a { background: #2f80c8; } .b { background: #1c9b6c; } .c { background: #c4722a; }
+.arrow { align-self: center; font-size: 34px; color: #7a8aa0; }
+.big { font-size: 64px; font-weight: 700; color: #0b3d6b; line-height: 1; }
+.small { font-size: 19px; color: #4c5d73; }
+.stage code { background: rgba(255,255,255,.25); color: #fff; }
+.lesson { border-left: 6px solid #c4722a; padding: 4px 16px; margin-bottom: 14px; background: #fdf6ee; }
+.lesson b { color: #9a4f10; }
+.lesson p { font-size: 21px; margin: 2px 0; }
+</style></head><body>
+
+<section class="s title">
+  <h1>Gerência de Configuração em uma API de tarefas</h1>
+  <p>Plano de CM · tecnologias · pipeline Commit → Aceitação → Lançamento</p>
+  <p style="margin-top:70px">TP1 · Gerência de Configuração e Evolução de Software</p>
+  <p class="small" style="color:#9fc3e6">Guilherme · Marcos · Carlos · Mateus · Bernardo · Gabriela · Rafael</p>
+</section>
+
+<section class="s"><div class="t">0:00–0:45</div>
+  <h2>O projeto</h2>
+  <div class="row">
+    <div class="col">
+      <ul>
+        <li><b>tp-gerencia-config</b>: API REST de tarefas (criar, filtrar, mudar status, resumo)</li>
+        <li>Projeto <b>autoral</b> (sem risco de duplicidade)</li>
+        <li>TypeScript 5 (strict), Node 20, Express 4, Jest</li>
+        <li>Dados em memória: o foco é a <b>gestão de configuração</b>, não o sistema</li>
+      </ul>
+    </div>
+    <div class="col">
+      <table>
+        <tr><th>Requisito</th><th>Mínimo</th><th>Real</th></tr>
+        <tr><td>Arquivos (P-01)</td><td>10</td><td><b>12</b></td></tr>
+        <tr><td>Funções/métodos (P-02)</td><td>20</td><td><b>36</b></td></tr>
+        <tr><td>Testes (P-03)</td><td>—</td><td><b>193</b></td></tr>
+      </table>
+      <p class="small" style="margin-top:12px">Contagem por AST do TypeScript: <code>node scripts/contar-requisitos.js</code>. Não conta construtores nem callbacks.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s"><div class="t">0:45–2:30</div>
+  <h2>Plano de CM: identificar e versionar</h2>
+  <div class="row">
+    <div class="col">
+      <ul>
+        <li><b>18 ICs</b> catalogados (código, testes, Dockerfile, pipeline, docs) + itens derivados (imagem, Release)</li>
+        <li><b>SemVer</b>: a versão mora só no <code>package.json</code></li>
+        <li><b>Tag anotada</b> <code>vX.Y.Z</code> = <b>baseline</b></li>
+        <li>Commits em <b>Conventional Commits</b>; branches <code>autor/assunto</code></li>
+        <li>Plano na estrutura do modelo, seções 1 a 6</li>
+      </ul>
+    </div>
+    <div class="col box">
+      <p><b>Cadeia de rastreabilidade</b></p>
+      <p style="font-size:22px">issue → branch → PR → commit na <code>main</code> → tag <code>v0.1.1</code> → imagem <code>:0.1.1</code> (label <code>revision</code> = SHA) → Release → Render</p>
+      <p class="small">Baselines existentes: <code>v0.1.0</code> e <code>v0.1.1</code></p>
+    </div>
+  </div>
+</section>
+
+<section class="s"><div class="t">2:30–3:15</div>
+  <h2>Mudança e CCB</h2>
+  <div class="row">
+    <div class="col">
+      <ol style="font-size:23px;line-height:1.4;padding-left:28px;margin:0">
+        <li>Issue (pedido)</li><li>Triagem pelo CCB</li><li>Branch <code>autor/assunto</code></li>
+        <li>PR com <code>Closes #N</code></li><li>Pipeline verde (Commit + Aceitação)</li>
+        <li>Revisor que não é o autor</li><li>Merge por squash</li><li>Tag, se for release</li>
+      </ol>
+    </div>
+    <div class="col box">
+      <p><b>CCB</b> (quórum 3, autor não vota)</p>
+      <p style="font-size:22px">Presidente (Guilherme) · Gerente de configuração (Rafael) · Responsável por releases (Bernardo) · membro técnico em rodízio</p>
+      <p style="font-size:22px">Mudança em <b>contrato, pipeline, Dockerfile ou baseline</b>: 2 aprovações explícitas.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s"><div class="t">3:15–4:00</div>
+  <h2>Tecnologias</h2>
+  <table>
+    <tr><th>Camada</th><th>Escolha</th><th>Por quê</th></tr>
+    <tr><td>Controle de versão</td><td>Git + GitHub (PRs, issues, Releases)</td><td>Histórico, revisão e rastreabilidade</td></tr>
+    <tr><td>Build</td><td><code>npm ci</code> + <code>tsc</code></td><td>Lockfile = build reproduzível</td></tr>
+    <tr><td>Testes</td><td>Jest, ts-jest, supertest, <code>fetch</code></td><td>Unidade, integração e aceitação</td></tr>
+    <tr><td>CI/CD</td><td>GitHub Actions</td><td>Mesmo lugar do código</td></tr>
+    <tr><td>Empacotamento</td><td>Docker multi-stage (<code>node:20-alpine</code>, usuário <code>node</code>)</td><td>Artefato único e leve</td></tr>
+    <tr><td>Registro / produção</td><td>GHCR → Render (plano gratuito)</td><td>Entrega por container</td></tr>
+  </table>
+</section>
+
+<section class="s"><div class="t">4:00–5:30</div>
+  <h2>Pipeline de implantação</h2>
+  <p class="small" style="margin-bottom:4px">Gatilho: push na <code>main</code>, pull request e tag <code>vX.Y.Z</code>. A imagem é construída <b>uma só vez</b>.</p>
+  <div class="flow">
+    <div class="stage a"><b>1. Commit</b>npm ci · build · testes de <b>unidade</b> · testes de <b>integração</b> (116 + 55)</div>
+    <div class="arrow">▶</div>
+    <div class="stage b"><b>2. Aceitação</b>constrói a imagem · sobe o contêiner · 22 testes caixa-preta via HTTP · salva a imagem</div>
+    <div class="arrow">▶</div>
+    <div class="stage c"><b>3. Lançamento</b>(só em tag) carrega a <b>mesma</b> imagem, confere o ID · GHCR · Release · <code>deploy.sh</code> · <code>/health</code></div>
+  </div>
+  <ul style="margin-top:14px">
+    <li><code>needs</code> entre as etapas: falha em uma <b>bloqueia</b> as seguintes</li>
+    <li>Segredos só no environment <code>production</code>; nenhum no repositório</li>
+    <li>Entrega contínua: a tag é a decisão humana de liberar (baseline)</li>
+  </ul>
+</section>
+
+<section class="s"><div class="t">5:30–8:00</div>
+  <h2>Demonstração</h2>
+  <div class="row">
+    <div class="col">
+      <ol style="font-size:24px;line-height:1.45;padding-left:28px;margin:0">
+        <li><b>Verde:</b> execução completa (Commit → Aceitação → Lançamento) numa tag</li>
+        <li><b>Vermelha:</b> PR com teste quebrado → Commit falha, Aceitação e Lançamento ficam <i>skipped</i></li>
+        <li><b>No ar:</b> <code>/health</code> no Render e <code>docker run</code> da imagem do GHCR</li>
+        <li><b>Mesma imagem:</b> log com o ID testado = ID publicado</li>
+      </ol>
+    </div>
+    <div class="col box">
+      <p><b>Plano B</b></p>
+      <p style="font-size:22px">Execuções prévias abertas na aba Actions e gravação da demo, caso a rede ou o Render (cold start de até ~1 min) atrapalhem.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s"><div class="t">8:00–8:50</div>
+  <h2>Release, backup e auditoria</h2>
+  <div class="row">
+    <div class="col">
+      <ul style="font-size:23px">
+        <li><b>Release:</b> tag → imagem <code>X.Y.Z</code> imutável + Release + deploy</li>
+        <li><b>Rollback:</b> imagem anterior do GHCR via Render ou deploy hook</li>
+        <li><b>Backup:</b> GitHub + clone por integrante + espelho antes de cada tag</li>
+        <li><b>Recuperação testada:</b> espelho → <code>v0.1.1</code> → build → 171 testes verdes</li>
+      </ul>
+    </div>
+    <div class="col box">
+      <p><b>2 auditorias executadas</b></p>
+      <p style="font-size:21px">Compararam o plano com repositório, pipeline e histórico. Acharam: Aceitação fora da <code>main</code>, seção de backup ausente, imagem reconstruída 3 vezes, afirmações do plano sem prova. Cada achado virou correção rastreada.</p>
+    </div>
+  </div>
+</section>
+
+<section class="s"><div class="t">8:50–9:40</div>
+  <h2>Lições aprendidas</h2>
+  <div class="lesson"><b>Re-run quebrava o Lançamento.</b>
+    <p>A tag <code>v0.1.0</code> falhou: o step de Release retornou HTTP 422 porque o Release já existia. → Tornamos o step idempotente (PR #3). → Testaríamos o re-run antes de criar a primeira tag.</p></div>
+  <div class="lesson"><b>Imagem testada ≠ imagem publicada.</b>
+    <p>Construíamos a imagem 3 vezes. → Agora é 1 build, salvo como artefato; o Lançamento confere o ID. → Teríamos desenhado o artefato único desde o início.</p></div>
+  <div class="lesson"><b>Plano e prática divergiram.</b>
+    <p>O plano falava em issues e <code>main</code> protegida antes de existirem. → A auditoria cruzou plano × repositório e registramos os desvios. → Escreveríamos o plano depois do processo funcionar e com issues desde o PR #1.</p></div>
+  <div class="lesson"><b>Dependência entre pessoas.</b>
+    <p>A Aceitação só passava com as rotas HTTP prontas. → Fixamos a tabela de rotas como contrato. → Acordaríamos o contrato antes de dividir o trabalho.</p></div>
+</section>
+
+<section class="s"><div class="t">9:40–10:00</div>
+  <h2>Fechamento</h2>
+  <div class="row">
+    <div class="col">
+      <ul>
+        <li>CI/CD completo: build, 3 níveis de teste, container, deploy</li>
+        <li>Plano que descreve o que existe, e auditado</li>
+        <li>Próximos passos: <code>/health</code> com versão, proteção da <code>main</code> exigindo os 2 checks</li>
+      </ul>
+    </div>
+    <div class="col box">
+      <p class="big">Perguntas?</p>
+      <p class="small">Repositório: github.com/GuilhermeVieira05/tp-gerencia-config<br>Sistema: tp-gerencia-config.onrender.com</p>
+    </div>
+  </div>
+</section>
+</body></html>

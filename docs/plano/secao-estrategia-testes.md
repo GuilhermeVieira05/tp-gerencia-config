@@ -155,6 +155,6 @@ Com o domínio (5 arquivos, 16 funções), o código de produção somado tem **
 
 ## 11. Limitações conhecidas
 
-- O workflow dispara em push na `main` e em tags, não em pull request. Até isso mudar, a verificação antes do merge depende de o autor rodar `npm test` localmente e do revisor conferir. Uma melhoria possível é adicionar o gatilho `pull_request` à etapa de Commit.
+- O workflow dispara em push na `main`, em tags `vX.Y.Z` e em pull requests para a `main` (Commit e Aceitação). O Lançamento só roda em tag.
 - Não há limite mínimo de cobertura imposto pelo pipeline. A cobertura é medida sob demanda e registrada nesta seção.
 - Os dados ficam em memória, então não há teste de persistência. Desempenho, carga e segurança também não são testados.

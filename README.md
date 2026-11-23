@@ -86,7 +86,11 @@ Erros respondem no formato `{ "error": "mensagem" }`: **400** para entrada invá
 ├── .github/workflows/pipeline.yml   # pipeline de CI/CD (Commit, Aceitação, Lançamento)
 ├── docs/
 │   ├── como-rodar.md                # guia de execução
-│   └── plano/                       # seções do Plano de Gerência de Configuração
+│   └── plano/                       # seções e plano consolidado (PLANO_DE_CM.md)
+├── scripts/
+│   ├── deploy.sh                    # script de implantação (usado pela etapa de Lançamento)
+│   ├── contar-requisitos.js         # contagem de arquivos e funções (P-01, P-02)
+│   └── gerar-entrega.sh             # gera PDFs e zip de entrega
 ├── src/
 │   ├── domain/                      # regras de negócio, validação e repositório em memória
 │   ├── http/                        # rotas, controlador, leitura de requisição e erros
@@ -107,10 +111,12 @@ Erros respondem no formato `{ "error": "mensagem" }`: **400** para entrada invá
 | Etapa | Job | Quando roda | O que faz |
 |---|---|---|---|
 | Commit | `commit-stage` | Push na `main` e tags `vX.Y.Z` | `npm ci`, build, testes de unidade e de integração |
-| Aceitação | `acceptance-stage` | Depois da Commit | Constrói a imagem, sobe o contêiner e roda os testes de aceitação via HTTP |
-| Lançamento | `release-stage` | Só em tag `vX.Y.Z`, depois das anteriores | Publica a imagem no GHCR, cria o GitHub Release e implanta no Render |
+| Aceitação | `acceptance-stage` | Depois da Commit | Constrói a imagem (uma única vez), sobe o contêiner e roda os testes de aceitação via HTTP; salva a imagem como artefato |
+| Lançamento | `release-stage` | Só em tag `vX.Y.Z`, depois das anteriores | Carrega a **mesma** imagem testada, publica no GHCR, cria o GitHub Release e implanta no Render (`scripts/deploy.sh`) |
 
-Uma etapa só roda se a anterior passar. Para gerar uma release, veja a seção de release em [docs/plano/secao-release-implantacao.md](docs/plano/secao-release-implantacao.md).
+Em pull requests para a `main` rodam Commit e Aceitação. Uma etapa só roda se a anterior passar.
+
+**Sistema implantado:** https://tp-gerencia-config.onrender.com (`/health`). O plano gratuito do Render hiberna após inatividade, então a primeira requisição pode levar cerca de 1 minuto. Para gerar uma release, veja a seção de release em [docs/plano/secao-release-implantacao.md](docs/plano/secao-release-implantacao.md).
 
 ## Como contribuir
 
@@ -130,6 +136,9 @@ As convenções completas de nomenclatura e versionamento estão em [docs/plano/
 | [Projeto e arquitetura](docs/plano/secao-projeto-arquitetura.md) | Escopo do sistema e organização do código |
 | [Estratégia de testes](docs/plano/secao-estrategia-testes.md) | Níveis de teste, convenções e critérios |
 | [Release e implantação](docs/plano/secao-release-implantacao.md) | Etapa de Lançamento, Docker, secrets e rollback |
+| [Backup, retenção e recuperação](docs/plano/secao-backup-recuperacao.md) | Onde ficam os artefatos e como restaurar |
+| [Plano consolidado](docs/plano/PLANO_DE_CM.md) | Plano de GC completo, na estrutura do modelo (origem do PDF) |
+| [Contagem de requisitos](docs/contagem_requisitos.md) | Evidência de P-01 e P-02 |
 
 ## Equipe
 
