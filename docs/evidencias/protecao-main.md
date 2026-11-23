@@ -17,10 +17,19 @@
 
 Antes da ativação: a proteção não existia segundo a issue #11 (aberta até o dono ativá-la) e a declaração do dono. A auditoria 3 (2026-11-22) registrou 404 em `GET .../branches/main/protection` e `[]` em `GET .../rulesets`, mas o 404 **não prova** a ausência: esse endpoint exige permissão de administrador e responde 404 às demais contas mesmo com a proteção ativa.
 
-## O que depende da declaração do dono
+## O que o print mostra
 
-Na issue #11, o dono declarou: PR obrigatório com 1 aprovação, force-push e deleção bloqueados, administrador pode contornar. Esses itens **não são visíveis** para contas sem permissão de administrador; a verificação direta é *Settings → Branches*. Por isso, o README e o plano os tratam como declaração do dono, não como fato verificado.
+`docs/evidencias/protecao-main.png`: tela *Settings → Branches → Branch protection rule* do repositório, regra para o padrão `main` ("Applies to 1 branch"), enviada pelo grupo a partir de uma conta com acesso a *Settings* (a do dono). Itens visíveis:
 
-## Pendente
+| Item | Estado no print |
+|---|---|
+| Require a pull request before merging | **Marcado** |
+| Require approvals | **Marcado**, 1 aprovação |
+| Dismiss stale pull request approvals when new commits are pushed | Desmarcado (uma aprovação continua valendo depois de novos commits) |
+| Require status checks to pass before merging | **Marcado**: `Etapa de Commit` e `Etapa de Aceitacao` (GitHub Actions) |
+| Require branches to be up to date before merging | Desmarcado |
+| Require conversation resolution / signed commits / linear history | Desmarcados |
+| Do not allow bypassing the above settings | **Desmarcado**: administradores podem contornar PR, aprovação e checks |
+| Allow force pushes / Allow deletions (seção "Rules applied to everyone including administrators") | **Desmarcados**: *force-push* e deleção bloqueados, inclusive para administradores |
 
-- Print de *Settings → Branches* em `docs/evidencias/protecao-main.png`, a ser feito pelo dono (o checklist da auditoria física, 3.3.2, o pede).
+Limitações: é uma tela de edição da regra, sem data visível; o estado salvo foi confirmado também por `protected: true` e pelos dois checks na API (acima). A aprovação não é invalidada por commits novos (*dismiss stale* desmarcado): quem altera um PR depois da review deve pedir nova review, como foi feito no #20.
