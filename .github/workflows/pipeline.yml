@@ -167,24 +167,8 @@ jobs:
             --generate-notes \
             --notes "Imagem: \`${{ steps.version.outputs.image }}:${{ steps.version.outputs.version }}\`"
 
-      - name: Deploy no Render
+      - name: Deploy no Render (scripts/deploy.sh)
         env:
           RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-          IMAGE: ${{ steps.version.outputs.image }}:${{ steps.version.outputs.version }}
-        run: |
-          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
-            echo "::error::Secret RENDER_DEPLOY_HOOK_URL nao configurado no environment production."
-            exit 1
-          fi
-          # imgURL faz o Render implantar exatamente a versao recem-publicada
-          curl -fsS -X POST -G "$RENDER_DEPLOY_HOOK_URL" --data-urlencode "imgURL=$IMAGE"
-
-      - name: Verificar implantacao
-        if: vars.RENDER_APP_URL != ''
-        run: |
-          for i in $(seq 1 30); do
-            if curl -fsS "${{ vars.RENDER_APP_URL }}/health"; then exit 0; fi
-            sleep 10
-          done
-          echo "::error::Aplicacao nao respondeu em ${{ vars.RENDER_APP_URL }}/health"
-          exit 1
+          RENDER_APP_URL: ${{ vars.RENDER_APP_URL }}
+        run: ./scripts/deploy.sh "${{ steps.version.outputs.image }}:${{ steps.version.outputs.version }}"
