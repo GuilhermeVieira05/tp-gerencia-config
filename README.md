@@ -155,4 +155,4 @@ As convenções completas de nomenclatura e versionamento estão em [docs/plano/
 | Mateus | Teste de aceitação automatizado e sua etapa no pipeline (PR #4, fechado sem merge; integrado pelo #13 com `Co-authored-by`) |
 | Bernardo | Dockerfile e etapa de Lançamento (CD) |
 | Gabriela | README e documentação de como rodar |
-| Rafael | Revisão de código e dos pull requests (papel definido; sem commits ou reviews registrados até 2026-11-22) |
+| Rafael | Revisão de código e dos pull requests (papel definido; sem commits; a primeira review registrada do repositório é dele, no PR #18) |

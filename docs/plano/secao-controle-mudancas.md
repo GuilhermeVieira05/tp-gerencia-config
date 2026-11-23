@@ -26,9 +26,9 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 
 #### Procedimento definido × prática realizada
 
-Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commit `69b137f`:
+Verificado em 2026-11-23 no GitHub (`gh api`) e no histórico Git, sobre o commit `fdcc342` (a `main` após o PR #18). Onde o estado mudou durante a rodada de correção, a linha diz a data:
 
-| Tema | Definido neste plano | Realizado até 2026-11-22 |
+| Tema | Definido neste plano | Realizado até 2026-11-23 |
 |---|---|---|
 | Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Ativa desde 2026-11-23**, configurada pelo dono (Guilherme; issue #11, fechada). Verificável por qualquer integrante: `gh api repos/<dono>/<repo>/branches/main` retorna `protected: true` e os status checks "Etapa de Commit" e "Etapa de Aceitacao" como obrigatórios. Pelo comentário do dono na issue, também exige PR com 1 aprovação e bloqueia *force-push* e deleção; esses itens **não** aparecem para contas sem permissão de administrador. **O administrador pode contornar a regra** (*bypass* habilitado); isso é um risco aceito e deve ser usado só em emergência, com registro no PR ou na issue. Até o PR #18 a `main` não tinha proteção (a API respondia 404) |
 | Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada nos PRs #1 a #7 e #13 a #16** (11 PRs, contando os fechados sem merge #4 e #15). **O PR #18 é o primeiro com review registrada** (Rafael, aprovado, com validação local descrita na review). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
@@ -60,4 +60,4 @@ Verificado em 2026-11-22 no GitHub (`gh api`) e no histórico Git, sobre o commi
 4. Reuniões: curtas, ao fim de cada marco (seção 4), para revisar issues abertas e a pauta da próxima baseline. A ata fica como comentário na issue do marco.
 5. Mudanças rejeitadas ficam registradas na issue com a justificativa.
 
-**Prática até 2026-11-22:** não há atas, votações nem aprovações do CCB registradas; o único registro de verificação das mudanças é o resultado do pipeline. As três tags criadas (`v0.1.0` a `v0.1.2`) também não têm registro de aprovação do presidente e do responsável por releases além da própria tag anotada e do GitHub Release. Daqui em diante, as decisões do CCB são registradas no PR ou na issue correspondente.
+**Prática até 2026-11-23:** não há atas nem votações do CCB registradas; a única aprovação registrada é a review do Rafael no PR #18, e fora isso o registro de verificação das mudanças é o resultado do pipeline. As três tags criadas (`v0.1.0` a `v0.1.2`) também não têm registro de aprovação do presidente e do responsável por releases além da própria tag anotada e do GitHub Release. Daqui em diante, as decisões do CCB são registradas no PR ou na issue correspondente.

@@ -101,7 +101,7 @@ A('''O grupo tem sete integrantes, trabalhando de forma remota sobre um reposit�
 | Camada HTTP e testes de integração | Carlos | Camada HTTP, testes de unidade e de integração |
 | Documentação | Gabriela | README, guia de execução, introdução e identificação de configuração |
 
-**Papéis × registro no Git.** A tabela acima é o **papel definido**. O que o histórico mostra (verificado em 2026-11-22, commit `69b137f`; `git log` e GitHub) é:
+**Papéis × registro no Git.** A tabela acima é o **papel definido**. O que o histórico mostra (verificado em 2026-11-23, commit `fdcc342`; `git log` e GitHub) é:
 
 | Integrante | Registro no Git e no GitHub |
 |---|---|
@@ -113,7 +113,7 @@ A('''O grupo tem sete integrantes, trabalhando de forma remota sobre um reposit�
 | Gabriela | PR #7: README, guia de execução e a introdução do plano |
 | Rafael | Nenhum commit ou PR; **primeira review registrada do repositório**, no PR #18 (aprovado) |
 
-Onde a prática difere do papel definido, vale esta tabela. Em especial, **não há reviews de PR registradas** (3.2.1).
+Onde a prática difere do papel definido, vale esta tabela. Em especial, **nenhum PR anterior ao #18 tem review registrada** (3.2.1).
 
 **Interfaces:** o código deve entrar pela `main` por PR; o pipeline é a interface entre o desenvolvimento e a operação (GitHub Actions → GHCR → Render); o professor avalia o plano, o repositório e a apresentação.
 ''')
