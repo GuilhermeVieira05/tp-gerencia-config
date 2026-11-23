@@ -9,8 +9,8 @@
 | M3: HTTP e testes | 2026-11-18 | Rotas, testes de integração, estratégia de testes | Sim |
 | M4: Primeira release | 2026-11-19 | Tags `v0.1.0` e `v0.1.1`, imagem no GHCR | Sim |
 | M5: Aceitação e documentação | 2026-11-22 | Etapa de Aceitação no pipeline, README, plano completo (v1.0) | Sim |
-| M6: Auditoria final e release `v1.0.0` | `[CONFIRMAR: data de entrega no Canvas]` menos 2 dias | Auditoria física, tag da versão final, zip do repositório | Sim |
-| M7: Entrega e apresentação | `[CONFIRMAR: data do Canvas e do sorteio]` | Plano em PDF, zip, script de implantação, slides | Congelado |
+| M6: Auditoria final e release `v1.0.0` | 2026-11-27 | Auditoria física, tag da versão final, zip do repositório | Sim |
+| M7: Entrega no Canvas e apresentação | 2026-11-29 (entrega); ordem da apresentação por sorteio em aula | Plano em PDF, zip, script de implantação, slides | Congelado |
 
 **Quando atualizar o plano:** ao fim de cada marco; ao criar uma baseline; quando uma ferramenta, o pipeline ou o fluxo de mudança muda; e após cada auditoria com achado. Cada atualização gera uma linha no histórico de revisão e incrementa a versão do plano (`MINOR` para ajuste, `MAJOR` para mudança de processo).
 
