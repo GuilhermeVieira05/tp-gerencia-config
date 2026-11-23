@@ -25,7 +25,7 @@
 - [ ] Pipeline verde com Commit, Aceitação e Lançamento
 - [ ] Tag `vX.Y.Z` igual a `package.json` e com GitHub Release
 - [ ] Imagem `ghcr.io/guilhermevieira05/tp-gerencia-config:X.Y.Z` existe e `/health` responde no Render
-- [ ] Proteção da `main` ativa (`gh api repos/<dono>/<repo>/branches/main/protection` responde 200; print em `docs/evidencias/`)
+- [ ] Proteção da `main` ativa: `gh api repos/<dono>/<repo>/branches/main --jq '{protected, protection}'` mostra `protected: true` e os checks `Etapa de Commit` e `Etapa de Aceitacao` (o endpoint `.../protection` exige permissão de administrador e responde 404 às demais contas, mesmo com a proteção ativa); print de *Settings → Branches* em `docs/evidencias/`
 - [ ] Toda PR mesclada referencia uma issue
 
 **Registro:** o resultado de cada rodada vai em `docs/auditoria_configuracao.md` (rodada 1), `docs/auditoria_rodada2.md` (rodada 2) e `docs/auditoria_rodada3.md` (rodada 3), com data, commit auditado, achados e correções. Os relatórios são históricos: descrevem o estado do commit auditado, não o atual.
@@ -42,7 +42,7 @@
 **Desvios conhecidos (registrados nas auditorias 2 e 3):**
 
 - Os PRs #1 a #7 foram abertos antes de o grupo registrar issues. A rastreabilidade issue → PR vale a partir do PR #13; os anteriores são rastreados pelo número do PR e pelo histórico de commits.
-- **Proteção da `main`:** não existia até o PR #18 (auditoria 3: API de proteção 404). Foi ativada pelo dono em 2026-11-23 (issue #11, fechada); evidência em `docs/evidencias/protecao-main.md`. O administrador pode contornar a regra. Os merges de #1 a #16 ocorreram antes dela.
+- **Proteção da `main`:** não existia até o PR #18, segundo a issue #11 (aberta até a ativação) e a declaração do dono; a auditoria 3 registrou 404 no endpoint de proteção, mas esse resultado não prova a ausência para contas sem permissão de administrador. Foi ativada pelo dono em 2026-11-23 (issue #11, fechada); evidência em `docs/evidencias/protecao-main.md`. O administrador pode contornar a regra. Os merges dos PRs #1 a #7, #13 a #16 e #18 ocorreram antes dela.
 - **Nenhum dos PRs #1 a #7 e #13 a #16 tem review registrada** (a primeira é a do #18); ver "Procedimento definido × prática realizada" em 3.2.1.
 - A regra `Closes #N` não foi aplicada nos PRs #14, #15 e #16; a estratégia de merge foi mista (#1, #5 e #7 com *merge commit*). Detalhes em 3.2.1.
 - A verificação pós-deploy por versão só vale a partir da primeira release posterior à correção F-06 (3.3.1).

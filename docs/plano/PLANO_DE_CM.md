@@ -392,7 +392,7 @@ Toda mudança em um Item de Configuração (código, testes, pipeline, `Dockerfi
 
 **Rastreabilidade:** issue → branch → commits → PR → commit na `main` → tag → imagem (`APP_VERSION` e labels OCI) → release. Com isso é possível ir de uma versão em execução até o pedido que a originou.
 
-**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks "Etapa de Commit" e "Etapa de Aceitação", e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado: ativa desde 2026-11-23** (ver abaixo e `docs/evidencias/protecao-main.md`). Até o PR #18 ela não existia.
+**Proteção técnica da `main` (definida):** exigir PR, a aprovação mencionada e os status checks **`Etapa de Commit`** e **`Etapa de Aceitacao`** (os nomes exatos dos jobs em `pipeline.yml`, **sem acento** no segundo; com acento o check nunca seria satisfeito e todo PR ficaria travado), e bloquear *force-push*. A configuração fica em *Settings → Branches* e deve ser conferida a cada auditoria (3.3.2). **Estado: ativa desde 2026-11-23** (ver abaixo e `docs/evidencias/protecao-main.md`). Até o PR #18 ela não existia, segundo a issue #11 (aberta até a ativação) e a declaração do dono.
 
 #### Procedimento definido × prática realizada
 
@@ -400,7 +400,7 @@ Verificado em 2026-11-23 no GitHub (`gh api`) e no histórico Git, sobre o commi
 
 | Tema | Definido neste plano | Realizado até 2026-11-23 |
 |---|---|---|
-| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Ativa desde 2026-11-23**, configurada pelo dono (Guilherme; issue #11, fechada). Verificável por qualquer integrante: `gh api repos/<dono>/<repo>/branches/main` retorna `protected: true` e os status checks "Etapa de Commit" e "Etapa de Aceitacao" como obrigatórios. Pelo comentário do dono na issue, também exige PR com 1 aprovação e bloqueia *force-push* e deleção; esses itens **não** aparecem para contas sem permissão de administrador. **O administrador pode contornar a regra** (*bypass* habilitado); isso é um risco aceito e deve ser usado só em emergência, com registro no PR ou na issue. Até o PR #18 a `main` não tinha proteção (a API respondia 404) |
+| Proteção da `main` | PR, aprovação e dois status checks obrigatórios; sem *force-push* | **Ativa desde 2026-11-23**, configurada pelo dono (Guilherme; issue #11, fechada). Verificável por qualquer integrante: `gh api repos/<dono>/<repo>/branches/main` retorna `protected: true` e os status checks "Etapa de Commit" e "Etapa de Aceitacao" como obrigatórios. Pelo comentário do dono na issue, também exige PR com 1 aprovação e bloqueia *force-push* e deleção; esses itens **não** aparecem para contas sem permissão de administrador. **O administrador pode contornar a regra** (*bypass* habilitado); isso é um risco aceito e deve ser usado só em emergência, com registro no PR ou na issue. Antes disso não havia proteção, segundo a issue #11 (aberta até a ativação) e a declaração do dono; o 404 de `.../branches/main/protection` para contas sem permissão de administrador **não** prova a ausência, porque essa conta receberia 404 de qualquer forma |
 | Revisão de PR | Aprovação de outro integrante; 2 aprovações do CCB para contrato, pipeline, `Dockerfile` ou baseline | **Nenhuma review registrada nos PRs #1 a #7 e #13 a #16** (11 PRs, contando os fechados sem merge #4 e #15). **O PR #18 é o primeiro com review registrada** (Rafael, aprovado, com validação local descrita na review). O portão efetivo foi o pipeline verde; as decisões de merge não ficaram registradas como aprovação do CCB. Alterações de `pipeline.yml` e `Dockerfile` (PRs #2, #3, #13, #14) entraram sem as 2 aprovações previstas |
 | Quem revisa | Rafael, por padrão | Rafael não tem commit nem PR; fez a **primeira review registrada**, no PR #18 (aprovado) |
 | Issue → PR (`Closes #N`) | Todo PR referencia uma issue | PRs #1 a #7 anteriores às issues; só o #13 tem `Closes #N`; #14, #15 e #16 não têm; a rodada de correção usa a issue #17 |
@@ -605,7 +605,7 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 - [ ] Pipeline verde com Commit, Aceitação e Lançamento
 - [ ] Tag `vX.Y.Z` igual a `package.json` e com GitHub Release
 - [ ] Imagem `ghcr.io/guilhermevieira05/tp-gerencia-config:X.Y.Z` existe e `/health` responde no Render
-- [ ] Proteção da `main` ativa (`gh api repos/<dono>/<repo>/branches/main/protection` responde 200; print em `docs/evidencias/`)
+- [ ] Proteção da `main` ativa: `gh api repos/<dono>/<repo>/branches/main --jq '{protected, protection}'` mostra `protected: true` e os checks `Etapa de Commit` e `Etapa de Aceitacao` (o endpoint `.../protection` exige permissão de administrador e responde 404 às demais contas, mesmo com a proteção ativa); print de *Settings → Branches* em `docs/evidencias/`
 - [ ] Toda PR mesclada referencia uma issue
 
 **Registro:** o resultado de cada rodada vai em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md` (rodada 1), `docs/auditoria_rodada2.md` (rodada 2) e `docs/auditoria_rodada3.md` (rodada 3), com data, commit auditado, achados e correções. Os relatórios são históricos: descrevem o estado do commit auditado, não o atual.
@@ -622,7 +622,7 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 **Desvios conhecidos (registrados nas auditorias 2 e 3):**
 
 - Os PRs #1 a #7 foram abertos antes de o grupo registrar issues. A rastreabilidade issue → PR vale a partir do PR #13; os anteriores são rastreados pelo número do PR e pelo histórico de commits.
-- **Proteção da `main`:** não existia até o PR #18 (auditoria 3: API de proteção 404). Foi ativada pelo dono em 2026-11-23 (issue #11, fechada); evidência em `docs/evidencias/protecao-main.md`. O administrador pode contornar a regra. Os merges de #1 a #16 ocorreram antes dela.
+- **Proteção da `main`:** não existia até o PR #18, segundo a issue #11 (aberta até a ativação) e a declaração do dono; a auditoria 3 registrou 404 no endpoint de proteção, mas esse resultado não prova a ausência para contas sem permissão de administrador. Foi ativada pelo dono em 2026-11-23 (issue #11, fechada); evidência em `docs/evidencias/protecao-main.md`. O administrador pode contornar a regra. Os merges dos PRs #1 a #7, #13 a #16 e #18 ocorreram antes dela.
 - **Nenhum dos PRs #1 a #7 e #13 a #16 tem review registrada** (a primeira é a do #18); ver "Procedimento definido × prática realizada" em 3.2.1.
 - A regra `Closes #N` não foi aplicada nos PRs #14, #15 e #16; a estratégia de merge foi mista (#1, #5 e #7 com *merge commit*). Detalhes em 3.2.1.
 - A verificação pós-deploy por versão só vale a partir da primeira release posterior à correção F-06 (3.3.1).

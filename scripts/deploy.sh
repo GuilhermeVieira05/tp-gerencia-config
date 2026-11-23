@@ -28,10 +28,12 @@ fi
 # A tag e o que vem depois do ultimo ":" do NOME da imagem (depois da ultima "/"), para que
 # um registro com porta (localhost:5000/repo) sem tag seja recusado.
 case "${IMAGE##*/}" in
-  *:*) ;;
+  *@*) echo "ERRO: referencia por digest (@sha256:...) nao e suportada; use a tag da versao (ex.: ghcr.io/dono/repo:1.2.3)." >&2; exit 2 ;;
+  *:?*) ;;
   *) echo "ERRO: informe a imagem com tag (ex.: ghcr.io/dono/repo:1.2.3)." >&2; exit 2 ;;
 esac
 EXPECTED_VERSION="${IMAGE##*:}"
+[ -n "$EXPECTED_VERSION" ] || { echo "ERRO: tag vazia em '$IMAGE'." >&2; exit 2; }
 
 if [ -z "${RENDER_DEPLOY_HOOK_URL:-}" ]; then
   echo "ERRO: RENDER_DEPLOY_HOOK_URL nao configurada." >&2

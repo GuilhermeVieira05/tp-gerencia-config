@@ -127,7 +127,7 @@ Em pull requests para a `main` rodam Commit e Aceitação. Uma etapa só roda se
 3. Rode `npm run build` e `npm test` antes de abrir o pull request.
 4. Abra o pull request para a `main`, citando a issue (`Closes #N`), e peça revisão a outro integrante. Merge somente por *squash*.
 
-> **Estado real:** a proteção da `main` está **ativa desde 2026-11-23** (PR obrigatório, checks "Etapa de Commit" e "Etapa de Aceitação"; o administrador pode contornar). Os PRs #1 a #16 foram integrados **sem review registrada**; a primeira review é a do PR #18. O plano (3.2.1 e 3.3.2) registra esses desvios e `docs/evidencias/protecao-main.md` a verificação.
+> **Estado real:** a proteção da `main` está **ativa desde 2026-11-23** (checks obrigatórios `Etapa de Commit` e `Etapa de Aceitacao`, verificáveis com `gh api repos/<dono>/<repo>/branches/main`; o administrador pode contornar). "PR com 1 aprovação" e o bloqueio de *force-push* são **declaração do dono** (issue #11): contas sem permissão de administrador não conseguem ver essas regras. Os PRs #1 a #7 e #13 a #16 (#4 e #15 fechados sem merge) foram integrados **sem review registrada**; a primeira review é a do PR #18. O plano (3.2.1 e 3.3.2) registra esses desvios e `docs/evidencias/protecao-main.md` a verificação.
 
 As convenções completas de nomenclatura e versionamento estão em [docs/plano/secao-introducao-configuracao.md](docs/plano/secao-introducao-configuracao.md).
 
