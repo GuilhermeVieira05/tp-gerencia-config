@@ -20,7 +20,7 @@
 | 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |
 | 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |
 | 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |
-| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida; imagem base e runner com versão exata; `npm audit` registrado; changelog, roteiro e `scripts/demo-local.sh` | Marcos |
+| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida; imagem base e runner com versão exata; `npm audit` registrado; changelog, roteiro e `scripts/demo-local.sh`; versão 1.0.0 preparada (exceção declarada ao SemVer em 3.1.1) | Marcos |
 
 ## Índice
 
@@ -193,8 +193,8 @@ O que pode ser gerado de novo a partir dos ICs (`node_modules/`, `dist/`, `cover
 | IC-10 | Empacotamento | `Dockerfile`, `.dockerignore` | Build / implantação | Bernardo |
 | IC-11 | Pipeline de CI/CD | `.github/workflows/pipeline.yml` | Automação | Guilherme (Commit), Mateus (Aceitação), Bernardo (Lançamento) |
 | IC-12 | Regras de exclusão | `.gitignore` | Configuração | Guilherme |
-| IC-13 | README, guia de execução, changelog, roteiro e evidências | `README.md`, `docs/como-rodar.md`, `docs/changelog.md`, `docs/roteiro-apresentacao.md`, `docs/evidencias/` | Documentação | Gabriela |
-| IC-14 | Plano de GC | `docs/plano/` | Documentação | Todos (unificado por Rafael) |
+| IC-13 | README, guia de execução, changelog, roteiro e evidências | `README.md`, `docs/como-rodar.md`, `docs/changelog.md`, `docs/roteiro-apresentacao.md`, `docs/evidencias/` | Documentação | Gabriela (README e guia); Marcos (changelog, roteiro e evidências) |
+| IC-14 | Plano de GC | `docs/plano/` | Documentação | Todos (consolidado por Marcos com `scripts/entrega/montar_plano.py`; o gerente de configuração, Rafael, é o responsável definido pela lista de ICs) |
 
 ###### Itens derivados (gerados pelo pipeline)
 
@@ -315,6 +315,8 @@ A versão da aplicação segue o [Versionamento Semântico 2.0.0](https://semver
 | **MINOR** | Funcionalidade nova, compatível | Nova rota, novo filtro em `GET /tasks`, novo campo opcional |
 | **PATCH** | Correção compatível, ou mudança interna que precisa ser implantada | Corrigir uma validação, ajustar o `Dockerfile` ou o pipeline |
 
+**Exceção declarada: `v1.0.0`.** A tabela reserva MAJOR a mudança incompatível, e nenhuma ocorreu. A `v1.0.0` não decorre dessa regra: o SemVer a usa para declarar a **primeira versão estável**, e aqui ela marca a versão final da entrega, com o contrato HTTP congelado (marco M7 do plano). Antes dela, em `0.x`, qualquer mudança podia ser incompatível, segundo o SemVer.
+
 Regras adicionais:
 
 - Enquanto a versão estiver em `0.y.z`, o contrato ainda pode mudar. O grupo publica a `1.0.0` na entrega final do TP, quando o contrato for considerado estável.
@@ -357,6 +359,9 @@ Cada tag `vX.Y.Z` na `main` é uma **baseline de release**: congela o estado de 
 | `v0.1.0` | 17/11/2026 | `e832342` | Scaffold da API, pipeline (Commit), camada de domínio com testes, `Dockerfile` e etapa de Lançamento |
 | `v0.1.1` | 19/11/2026 | `886f61f` | Etapa de Lançamento idempotente em re-run, camada HTTP com testes de unidade e integração |
 | `v0.1.2` | 22/11/2026 | `69b137f` | Etapa de Aceitação no pipeline, script de implantação, artefato único (imagem testada = imagem lançada), plano consolidado, slides, backup e recuperação, evidência da execução vermelha |
+| `v1.0.0` | prevista no marco M6 (2026-11-27) | o commit para o qual a tag `v1.0.0` apontar (merge do PR final) | Primeira versão estável: `/health` com versão e deploy verificado por versão, imagem base e runner com versão exata, `npm audit` registrado, proteção da `main` e fluxo de revisão documentados, auditorias antigas arquivadas no histórico do Git |
+
+Enquanto a tag `v1.0.0` não existir, a linha dela é **prevista**, não uma baseline; `git tag -l v1.0.0` e a aba *Releases* mostram se ela já foi criada.
 
 Regras para uma baseline:
 
@@ -575,7 +580,7 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 ###### Problemas conhecidos
 
 - O plano gratuito do Render hiberna o serviço após inatividade. A primeira requisição pode levar até ~1 min, o que a verificação pós-deploy tolera.
-- **Verificação por versão (desde o PR da rodada final de correção):** `/health` devolve `{status, version}` e o `deploy.sh` só aceita o deploy quando `version` bate com a tag. As releases `v0.1.0` a `v0.1.2` foram implantadas **antes** dessa mudança: a instância atual no Render ainda responde `/health` sem `version`, e nelas a verificação só provou que a aplicação estava no ar, não que a versão nova a substituíra (no log da `v0.1.2`, "OK na tentativa 1"). A verificação por versão passa a valer na primeira release criada depois da integração desse PR.
+- **Verificação por versão (a partir da release `v1.0.0`):** `/health` devolve `{status, version}` e o `deploy.sh` só aceita o deploy quando `version` bate com a tag. As releases `v0.1.0` a `v0.1.2` foram implantadas **antes** dessa mudança: nelas a verificação só provou que a aplicação estava no ar, não que a versão nova a substituíra (no log da `v0.1.2`, "OK na tentativa 1", com a instância ainda sem o campo `version`). Para saber qual regime vale em produção, consulte `curl <URL>/health`: com `version` igual à da última tag, a verificação por versão está em vigor.
 - **Artefato único:** a imagem é construída uma só vez, na Aceitação, e passada ao Lançamento como artefato do workflow (`app-image`, retenção de 7 dias). O Lançamento confere o ID da imagem antes de publicar. Se o artefato expirar, é preciso reexecutar o pipeline da tag. O `npm run build` (`tsc`) da Etapa de Commit é uma **validação de compilação** e não gera o artefato entregue: o artefato que segue da Aceitação para o Lançamento é a **imagem Docker**, cujo estágio de build compila o TypeScript de novo dentro do `Dockerfile`. Não se afirma, portanto, que o `dist/` do Commit seja o binário entregue; o que se garante é que a imagem lançada é a mesma (mesmo ID) que passou na Aceitação.
 - O Lançamento só roda em tag (a tag é a baseline). Push na `main` executa apenas Commit e Aceitação.
 

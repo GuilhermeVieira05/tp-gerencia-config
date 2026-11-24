@@ -43,7 +43,7 @@ hist_linhas = [l for l in cap.split('## Histórico de revisão')[1].split('## Í
 hist_linhas.append('| 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |')
 hist_linhas.append('| 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |')
 hist_linhas.append('| 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |')
-hist_linhas.append('| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida; imagem base e runner com versão exata; `npm audit` registrado; changelog, roteiro e `scripts/demo-local.sh` | Marcos |')
+hist_linhas.append('| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida; imagem base e runner com versão exata; `npm audit` registrado; changelog, roteiro e `scripts/demo-local.sh`; versão 1.0.0 preparada (exceção declarada ao SemVer em 3.1.1) | Marcos |')
 hist = '\n'.join(hist_linhas)
 ARQUIVOS = len(subprocess.run(['git', 'ls-files'], capture_output=True, text=True, check=True).stdout.splitlines())
 

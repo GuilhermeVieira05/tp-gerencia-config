@@ -79,8 +79,8 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
     </div>
     <div class="col box">
       <p><b>Cadeia de rastreabilidade</b></p>
-      <p style="font-size:22px">issue → branch → PR → commit na <code>main</code> → tag <code>v0.1.2</code> → imagem <code>:0.1.2</code> (label <code>revision</code> = SHA) → Release → Render</p>
-      <p class="small">Baselines: <code>v0.1.0</code>, <code>v0.1.1</code>, <code>v0.1.2</code>. Issue → PR vale após o PR #7 (e não nos #14 e #16)</p>
+      <p style="font-size:22px">issue → branch → PR → commit na <code>main</code> → tag <code>vX.Y.Z</code> → imagem <code>:X.Y.Z</code> (label <code>revision</code> = SHA) → Release → Render</p>
+      <p class="small">Baselines: <code>v0.1.0</code> a <code>v0.1.2</code> e a final <code>v1.0.0</code>. Issue → PR vale após o PR #7 (e não nos #14 e #16)</p>
     </div>
   </div>
 </section>
@@ -190,7 +190,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
       <ul>
         <li>CI/CD completo: build, 3 níveis de teste, container, deploy</li>
         <li>Plano que descreve o que existe, e auditado</li>
-        <li>Próximos passos: nova release com <code>/health</code> informando a versão; registrar a release no plano</li>
+        <li>Release final <code>v1.0.0</code>: <code>/health</code> informa a versão e o deploy só passa quando ela confere</li>
       </ul>
     </div>
     <div class="col box">

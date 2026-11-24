@@ -24,7 +24,7 @@ Os tempos abaixo são **metas**, não medições: ainda não houve ensaio cronom
 
 1. **Verde:** abrir a execução da tag `v0.1.2`; mostrar as três etapas verdes e, no log do Lançamento, os IDs "testada na Aceitação" e "carregada no Lançamento" iguais.
 2. **Vermelha:** abrir o PR #15 (**um PR, não a `main`**): Commit ❌, Aceitação e Lançamento *skipped*.
-3. **No ar:** `curl .../health` no Render. **Atenção:** a produção é a `v0.1.2` e ainda responde sem `version`; não prometer o campo `version` em produção.
+3. **No ar:** `curl .../health` no Render. **Confira antes:** se a resposta trouxer `"version":"1.0.0"`, a release final está no ar e vale mostrar o campo; se vier só `{"status":"ok"}`, a produção ainda é a `v0.1.2` e não se deve prometer a versão em produção. Se a execução da tag `v1.0.0` já tiver rodado, prefira abri-la no passo 1.
 4. **Imagem:** `docker run` da imagem do GHCR, se houver rede.
 
 **Plano B** (CI ou rede fora): execuções já concluídas nas abas acima e `./scripts/demo-local.sh`, que repete a Aceitação localmente (imagem, contêiner, `/health`, 22 cenários). Gravação em vídeo: **não existe ainda**; se o grupo gravar, guardar fora do zip.
@@ -38,7 +38,7 @@ Banco completo no Anexo B da fonte da verdade (`TP1_..._FONTE_DA_VERDADE.md`). A
 3. **Um commit na `main` vai à produção?** Não. Roda Commit e Aceitação; só a tag `vX.Y.Z` dispara o Lançamento (entrega contínua).
 4. **A imagem lançada é a testada?** Sim: construída uma vez na Aceitação, e o Lançamento compara o ID antes de publicar. O `tsc` do Commit só valida a compilação.
 5. **Integração integra com quê?** Camadas reais (HTTP, serviço, repositório em memória); não há banco.
-6. **O health-check prova a versão em produção?** Só a partir da primeira release posterior ao PR #18.
+6. **O health-check prova a versão em produção?** A partir da `v1.0.0`: `/health` informa `version` e o `deploy.sh` só aceita o deploy quando ela confere. Nas releases `v0.1.0` a `v0.1.2` provava só que a aplicação estava no ar.
 
 ## Ensaio
 

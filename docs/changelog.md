@@ -2,7 +2,9 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/). Versionamento semântico (`MAJOR.MINOR.PATCH`); cada tag `vX.Y.Z` é uma baseline (plano, 3.1.2). Datas em AAAA-MM-DD.
 
-## [Não lançado] (na `main` depois da `v0.1.2`)
+## [1.0.0] - release final (marco M6)
+
+Primeira versão estável (ver a exceção declarada em plano 3.1.1). Reúne o que entrou na `main` depois da `v0.1.2`.
 
 ### Adicionado
 - `/health` informa a versão (`{"status":"ok","version":"X.Y.Z"}`); o teste de aceitação CA01 a confere e, no pipeline, compara com o `package.json` (PR #18).
@@ -12,6 +14,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/). Versio
 - Este changelog e `docs/roteiro-apresentacao.md`.
 
 ### Alterado
+- Versão do `package.json` e do `package-lock.json`: `1.0.0`.
 - Plano, README e slides separam o **procedimento definido** da **prática realizada** (proteção da `main`, reviews, CCB, merge, rastreabilidade, papéis × Git) (PRs #18 e #20).
 - Imagem base fixada em `node:20.20.2-alpine3.23` e runner em `ubuntu-24.04`.
 - Relatórios das auditorias 1 a 3 saíram da árvore de trabalho; continuam no histórico do Git (resumo no plano, 3.3.2).
