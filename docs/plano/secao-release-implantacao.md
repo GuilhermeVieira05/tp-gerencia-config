@@ -59,7 +59,7 @@ A imagem também carrega a variável de ambiente `APP_VERSION` e labels OCI (`or
 
 ## 4. Dockerfile
 
-Build em dois estágios sobre `node:20-alpine`:
+Build em dois estágios sobre `node:20.20.2-alpine3.23` (versão exata fixada):
 
 1. **build**: `npm ci` com todas as dependências e `npm run build` (gera `dist/`).
 2. **runtime**: só dependências de produção (`npm ci --omit=dev`) e `dist/`. TypeScript, Jest e o código-fonte não entram na imagem final.

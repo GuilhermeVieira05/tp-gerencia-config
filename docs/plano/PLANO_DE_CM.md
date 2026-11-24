@@ -20,7 +20,7 @@
 | 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |
 | 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |
 | 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |
-| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida | Marcos |
+| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida; imagem base e runner com versão exata; `npm audit` registrado; changelog, roteiro e `scripts/demo-local.sh` | Marcos |
 
 ## Índice
 
@@ -146,7 +146,7 @@ Onde a prática difere do papel definido, vale esta tabela. Em especial, **nenhu
 | npm | `npm ci` com `package-lock.json` | Dependências reproduzíveis |
 | Express | 4 | Framework HTTP |
 | Jest, `ts-jest`, `supertest` | 29 | Testes de unidade, integração e aceitação |
-| Docker | Dockerfile em dois estágios sobre `node:20-alpine` | Empacotamento |
+| Docker | Dockerfile em dois estágios sobre `node:20.20.2-alpine3.23` | Empacotamento |
 | GitHub Actions | `.github/workflows/pipeline.yml` | CI/CD |
 | GHCR | — | Registro de imagens das releases |
 | Render | Plano gratuito | Produção (imagem implantada por *deploy hook*) |
@@ -154,10 +154,10 @@ Onde a prática difere do papel definido, vale esta tabela. Em especial, **nenhu
 | Ambiente | Onde | Para quê |
 |---|---|---|
 | Desenvolvimento | Máquina de cada integrante (`npm start`, `docker run`) | Escrever e testar antes do PR |
-| Integração contínua | Runner `ubuntu-latest` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
+| Integração contínua | Runner `ubuntu-24.04` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
 | Produção | Render, `https://tp-gerencia-config.onrender.com` | Sistema entregue aos usuários |
 
-**Volume e distribuição:** repositório pequeno (**59** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
+**Volume e distribuição:** repositório pequeno (**63** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
 
 ## 3. O Programa de Gerenciamento de Configuração
 
@@ -193,7 +193,7 @@ O que pode ser gerado de novo a partir dos ICs (`node_modules/`, `dist/`, `cover
 | IC-10 | Empacotamento | `Dockerfile`, `.dockerignore` | Build / implantação | Bernardo |
 | IC-11 | Pipeline de CI/CD | `.github/workflows/pipeline.yml` | Automação | Guilherme (Commit), Mateus (Aceitação), Bernardo (Lançamento) |
 | IC-12 | Regras de exclusão | `.gitignore` | Configuração | Guilherme |
-| IC-13 | README e guia de execução | `README.md`, `docs/como-rodar.md` | Documentação | Gabriela |
+| IC-13 | README, guia de execução, changelog, roteiro e evidências | `README.md`, `docs/como-rodar.md`, `docs/changelog.md`, `docs/roteiro-apresentacao.md`, `docs/evidencias/` | Documentação | Gabriela |
 | IC-14 | Plano de GC | `docs/plano/` | Documentação | Todos (unificado por Rafael) |
 
 ###### Itens derivados (gerados pelo pipeline)
@@ -662,15 +662,16 @@ Todo software de terceiros é open source ou serviço gratuito. Nada é copiado 
 |---|---|---|---|
 | `express` 4 | npm | Faixa `^4.21.2` em `package.json`; versão exata em `package-lock.json` | PR que altera `package.json` e `package-lock.json` |
 | Dependências de desenvolvimento (`typescript`, `jest`, `ts-jest`, `supertest`, tipos) | npm | Idem | Idem |
-| Imagem base `node:20-alpine` | Docker Hub | Versão maior fixa no `Dockerfile` | PR que altera o `Dockerfile` |
-| Actions (`actions/checkout@v4`, `setup-node@v4`, `docker/*@v3/v5/v6`) | GitHub Marketplace | Versão maior fixa no workflow | PR que altera `pipeline.yml` |
+| Imagem base `node:20.20.2-alpine3.23` | Docker Hub | **Versão exata** fixa no `Dockerfile` (Node, patch e Alpine). Não recebe correções de segurança sozinha: a atualização é feita por PR | PR que altera o `Dockerfile` |
+| Runner `ubuntu-24.04` | GitHub Actions | Versão fixa em `runs-on` (não usa `ubuntu-latest`) | PR que altera `pipeline.yml` |
+| Actions (`actions/checkout@v4`, `setup-node@v4`, `docker/*@v3/v5/v6`) | GitHub Marketplace | Só a **versão maior** é fixada (`@vN`); correções menores chegam sem PR. Limitação aceita: não há fixação por *commit SHA* | PR que altera `pipeline.yml` |
 | GitHub Container Registry | GitHub | Imagens com tag `X.Y.Z`, `X.Y`, `sha-*` e `latest` | Publicado pelo pipeline |
 | Render | Render | Imagem implantada por tag `X.Y.Z` | Deploy hook acionado pelo pipeline |
 
 **Regras:**
 1. Dependência nova entra por PR, com justificativa, e sempre com `package-lock.json` atualizado; a instalação usa `npm ci`.
 2. Atualizações de versão maior passam pelo CCB (afetam o contrato e o pipeline).
-3. Antes de cada tag, roda-se `npm audit` e registram-se vulnerabilidades altas ou críticas na auditoria.
+3. Antes de cada tag, roda-se `npm audit` e registram-se vulnerabilidades altas ou críticas na auditoria. Última execução: 2026-11-23, **0 vulnerabilidades** (inclusive só de produção), registrada em `docs/evidencias/npm-audit.md`.
 4. Licenças: apenas licenças permissivas (MIT, Apache-2.0, ISC, BSD); conferir ao adicionar dependência.
 5. Falha de um fornecedor (Render ou GHCR fora do ar): o artefato continua reproduzível a partir da tag com `docker build`; a versão anterior da imagem permite *rollback*.
 
@@ -806,7 +807,7 @@ push na main / PR / tag vX.Y.Z
 | 3.2 Controle de mudanças | Pipeline em PR e na `main`; Commit e Aceitação verdes antes do merge |
 | 3.3.1 Release | Etapa de Lançamento e `scripts/deploy.sh` |
 | 3.3.2 Auditoria | Registros de execução; artefato único (ID conferido) |
-| 6 Fornecedores | `npm ci` com lockfile; imagens e actions com versão fixada |
+| 6 Fornecedores | `npm ci` com lockfile; imagem base e runner com versão exata; actions na versão maior (`@vN`) |
 
 **Artefato único:** a imagem Docker é construída apenas na Aceitação (o `tsc` da Etapa de Commit é só validação de compilação). O Lançamento a recebe como artefato do workflow, compara o ID com o testado e só então aplica as tags e publica. O mesmo `scripts/deploy.sh` entregue ao professor é o chamado pelo pipeline.
 

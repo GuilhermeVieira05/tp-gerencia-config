@@ -90,6 +90,7 @@ Erros respondem no formato `{ "error": "mensagem" }`: **400** para entrada invá
 ├── scripts/
 │   ├── deploy.sh                    # script de implantação (usado pela etapa de Lançamento)
 │   ├── contar-requisitos.js         # contagem de arquivos e funções (P-01, P-02)
+│   ├── demo-local.sh                # repete a Aceitação localmente (plano B da demonstração)
 │   └── gerar-entrega.sh             # gera PDFs e zip de entrega
 ├── src/
 │   ├── domain/                      # regras de negócio, validação e repositório em memória
@@ -143,6 +144,9 @@ As convenções completas de nomenclatura e versionamento estão em [docs/plano/
 | [Backup, retenção e recuperação](docs/plano/secao-backup-recuperacao.md) | Onde ficam os artefatos e como restaurar |
 | [Plano consolidado](docs/plano/PLANO_DE_CM.md) | Plano de GC completo, na estrutura do modelo (origem do PDF) |
 | [Contagem de requisitos](docs/contagem_requisitos.md) | Evidência de P-01 e P-02 |
+| [Changelog](docs/changelog.md) | Mudanças por versão (`v0.1.0` a `v0.1.2` e o que está na `main` depois) |
+| [Roteiro da apresentação](docs/roteiro-apresentacao.md) | Tempos-alvo, demonstração, plano B e perguntas prováveis |
+| [Evidências](docs/evidencias/) | Execução vermelha, proteção da `main` (print) e `npm audit` |
 | [Auditorias (resumo no plano, 3.3.2)](docs/plano/secao-auditorias.md) | Rodadas 1 a 3; os relatórios completos ficam no histórico do Git |
 
 ## Equipe

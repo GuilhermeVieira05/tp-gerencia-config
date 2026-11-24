@@ -92,7 +92,7 @@ O que pode ser gerado de novo a partir dos ICs (`node_modules/`, `dist/`, `cover
 | IC-10 | Empacotamento | `Dockerfile`, `.dockerignore` | Build / implantação | Bernardo |
 | IC-11 | Pipeline de CI/CD | `.github/workflows/pipeline.yml` | Automação | Guilherme (Commit), Mateus (Aceitação), Bernardo (Lançamento) |
 | IC-12 | Regras de exclusão | `.gitignore` | Configuração | Guilherme |
-| IC-13 | README e guia de execução | `README.md`, `docs/como-rodar.md` | Documentação | Gabriela |
+| IC-13 | README, guia de execução, changelog, roteiro e evidências | `README.md`, `docs/como-rodar.md`, `docs/changelog.md`, `docs/roteiro-apresentacao.md`, `docs/evidencias/` | Documentação | Gabriela |
 | IC-14 | Plano de GC | `docs/plano/` | Documentação | Todos (unificado por Rafael) |
 
 ### 2.3 Itens derivados (gerados pelo pipeline)

@@ -43,7 +43,7 @@ hist_linhas = [l for l in cap.split('## Histórico de revisão')[1].split('## Í
 hist_linhas.append('| 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |')
 hist_linhas.append('| 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |')
 hist_linhas.append('| 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |')
-hist_linhas.append('| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida | Marcos |')
+hist_linhas.append('| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida; imagem base e runner com versão exata; `npm audit` registrado; changelog, roteiro e `scripts/demo-local.sh` | Marcos |')
 hist = '\n'.join(hist_linhas)
 ARQUIVOS = len(subprocess.run(['git', 'ls-files'], capture_output=True, text=True, check=True).stdout.splitlines())
 
@@ -127,7 +127,7 @@ A('''| Ferramenta | Versão | Uso |
 | npm | `npm ci` com `package-lock.json` | Dependências reproduzíveis |
 | Express | 4 | Framework HTTP |
 | Jest, `ts-jest`, `supertest` | 29 | Testes de unidade, integração e aceitação |
-| Docker | Dockerfile em dois estágios sobre `node:20-alpine` | Empacotamento |
+| Docker | Dockerfile em dois estágios sobre `node:20.20.2-alpine3.23` | Empacotamento |
 | GitHub Actions | `.github/workflows/pipeline.yml` | CI/CD |
 | GHCR | — | Registro de imagens das releases |
 | Render | Plano gratuito | Produção (imagem implantada por *deploy hook*) |
@@ -135,7 +135,7 @@ A('''| Ferramenta | Versão | Uso |
 | Ambiente | Onde | Para quê |
 |---|---|---|
 | Desenvolvimento | Máquina de cada integrante (`npm start`, `docker run`) | Escrever e testar antes do PR |
-| Integração contínua | Runner `ubuntu-latest` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
+| Integração contínua | Runner `ubuntu-24.04` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
 | Produção | Render, `https://tp-gerencia-config.onrender.com` | Sistema entregue aos usuários |
 
 **Volume e distribuição:** repositório pequeno (**@@ARQUIVOS@@** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
@@ -220,7 +220,7 @@ push na main / PR / tag vX.Y.Z
 | 3.2 Controle de mudanças | Pipeline em PR e na `main`; Commit e Aceitação verdes antes do merge |
 | 3.3.1 Release | Etapa de Lançamento e `scripts/deploy.sh` |
 | 3.3.2 Auditoria | Registros de execução; artefato único (ID conferido) |
-| 6 Fornecedores | `npm ci` com lockfile; imagens e actions com versão fixada |
+| 6 Fornecedores | `npm ci` com lockfile; imagem base e runner com versão exata; actions na versão maior (`@vN`) |
 
 **Artefato único:** a imagem Docker é construída apenas na Aceitação (o `tsc` da Etapa de Commit é só validação de compilação). O Lançamento a recebe como artefato do workflow, compara o ID com o testado e só então aplica as tags e publica. O mesmo `scripts/deploy.sh` entregue ao professor é o chamado pelo pipeline.
 ''')

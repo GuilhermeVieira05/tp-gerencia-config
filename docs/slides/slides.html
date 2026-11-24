@@ -42,7 +42,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   <p class="small" style="color:#9fc3e6">Guilherme · Marcos · Carlos · Mateus · Bernardo · Gabriela · Rafael</p>
 </section>
 
-<section class="s"><div class="t">0:00–0:45</div>
+<section class="s"><div class="t">0:00–0:40</div>
   <h2>O projeto</h2>
   <div class="row">
     <div class="col">
@@ -65,7 +65,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   </div>
 </section>
 
-<section class="s"><div class="t">0:45–2:30</div>
+<section class="s"><div class="t">0:40–2:00</div>
   <h2>Plano de CM: identificar e versionar</h2>
   <div class="row">
     <div class="col">
@@ -85,7 +85,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   </div>
 </section>
 
-<section class="s"><div class="t">2:30–3:15</div>
+<section class="s"><div class="t">2:00–2:40</div>
   <h2>Mudança e CCB</h2>
   <div class="row">
     <div class="col">
@@ -104,7 +104,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   </div>
 </section>
 
-<section class="s"><div class="t">3:15–4:00</div>
+<section class="s"><div class="t">2:40–3:20</div>
   <h2>Tecnologias</h2>
   <table>
     <tr><th>Camada</th><th>Escolha</th><th>Por quê</th></tr>
@@ -112,12 +112,12 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
     <tr><td>Build</td><td><code>npm ci</code> + <code>tsc</code></td><td>Lockfile = build reproduzível</td></tr>
     <tr><td>Testes</td><td>Jest, ts-jest, supertest, <code>fetch</code></td><td>Unidade, integração e aceitação</td></tr>
     <tr><td>CI/CD</td><td>GitHub Actions</td><td>Mesmo lugar do código</td></tr>
-    <tr><td>Empacotamento</td><td>Docker multi-stage (<code>node:20-alpine</code>, usuário <code>node</code>)</td><td>Artefato único e leve</td></tr>
+    <tr><td>Empacotamento</td><td>Docker multi-stage (<code>node:20.20.2-alpine3.23</code>, usuário <code>node</code>)</td><td>Artefato único e leve</td></tr>
     <tr><td>Registro / produção</td><td>GHCR → Render (plano gratuito)</td><td>Entrega por container</td></tr>
   </table>
 </section>
 
-<section class="s"><div class="t">4:00–5:30</div>
+<section class="s"><div class="t">3:20–4:50</div>
   <h2>Pipeline de implantação</h2>
   <p class="small" style="margin-bottom:4px">Push na <code>main</code> e PR: Commit + Aceitação. Tag <code>vX.Y.Z</code>: as três etapas. A <b>imagem Docker</b> é construída uma só vez.</p>
   <div class="flow">
@@ -135,7 +135,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   </ul>
 </section>
 
-<section class="s"><div class="t">5:30–8:00</div>
+<section class="s"><div class="t">4:50–7:20</div>
   <h2>Demonstração</h2>
   <div class="row">
     <div class="col">
@@ -153,7 +153,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   </div>
 </section>
 
-<section class="s"><div class="t">8:00–8:50</div>
+<section class="s"><div class="t">7:20–8:00</div>
   <h2>Release, backup e auditoria</h2>
   <div class="row">
     <div class="col">
@@ -171,7 +171,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
   </div>
 </section>
 
-<section class="s"><div class="t">8:50–9:40</div>
+<section class="s"><div class="t">8:00–8:50</div>
   <h2>Lições aprendidas</h2>
   <div class="lesson"><b>Re-run quebrava o Lançamento.</b>
     <p>A tag <code>v0.1.0</code> falhou: o step de Release retornou HTTP 422 porque o Release já existia. → Tornamos o step idempotente (PR #3). → Testaríamos o re-run antes de criar a primeira tag.</p></div>
@@ -183,7 +183,7 @@ code { font-family: Menlo, monospace; background: #eef2f7; padding: 1px 6px; bor
     <p>A Aceitação só passava com as rotas HTTP prontas. → Fixamos a tabela de rotas como contrato. → Acordaríamos o contrato antes de dividir o trabalho.</p></div>
 </section>
 
-<section class="s"><div class="t">9:40–10:00</div>
+<section class="s"><div class="t">8:50–9:20</div>
   <h2>Fechamento</h2>
   <div class="row">
     <div class="col">
