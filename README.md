@@ -143,7 +143,7 @@ As convenções completas de nomenclatura e versionamento estão em [docs/plano/
 | [Backup, retenção e recuperação](docs/plano/secao-backup-recuperacao.md) | Onde ficam os artefatos e como restaurar |
 | [Plano consolidado](docs/plano/PLANO_DE_CM.md) | Plano de GC completo, na estrutura do modelo (origem do PDF) |
 | [Contagem de requisitos](docs/contagem_requisitos.md) | Evidência de P-01 e P-02 |
-| [Auditorias](docs/auditoria_rodada3.md) | Rodadas 1 a 3 (`docs/auditoria_configuracao.md`, `docs/auditoria_rodada2.md`, `docs/auditoria_rodada3.md`) |
+| [Auditorias (resumo no plano, 3.3.2)](docs/plano/secao-auditorias.md) | Rodadas 1 a 3; os relatórios completos ficam no histórico do Git |
 
 ## Equipe
 

@@ -43,13 +43,14 @@ hist_linhas = [l for l in cap.split('## Histórico de revisão')[1].split('## Í
 hist_linhas.append('| 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |')
 hist_linhas.append('| 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |')
 hist_linhas.append('| 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |')
+hist_linhas.append('| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida | Marcos |')
 hist = '\n'.join(hist_linhas)
 ARQUIVOS = len(subprocess.run(['git', 'ls-files'], capture_output=True, text=True, check=True).stdout.splitlines())
 
 out = []
 A = out.append
 A('# Plano de Gerenciamento de Configuração\n')
-A(capa.replace('| **Versão do plano** | 1.0 |', '| **Versão do plano** | 1.3 |') + '\n')
+A(capa.replace('| **Versão do plano** | 1.0 |', '| **Versão do plano** | 1.4 |') + '\n')
 A('## Histórico de revisão\n'); A(hist + '\n')
 
 A('## Índice\n')
@@ -240,7 +241,6 @@ texto = sub(texto, [
  ('`secao-release-implantacao.md`', 'a subseção 3.3.1'),
  ('`secao-estrategia-testes.md` e `secao-qualidade-aceitacao.md`', 'o Apêndice B'),
  ('Seção 3 da introdução e `docs/como-rodar.md`', 'Seção 3.1 e `docs/como-rodar.md`'),
- ('`docs/auditoria_configuracao.md`', '`docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md`'),
  ('(seção de Release, itens 3 e 4)', '(3.3.1, "Configuração única do ambiente", itens 3 e 4)'),
  ('(seção de Release, item 8)', '(3.3.1, "Rollback")'),
  ('Seção do Plano', 'Plano'),

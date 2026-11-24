@@ -5,7 +5,7 @@
 | **Organização** | Grupo do TP1 · Gerência de Configuração e Evolução de Software |
 | **Projeto** | tp-gerencia-config: API REST de gerenciamento de tarefas |
 | **Repositório** | https://github.com/GuilhermeVieira05/tp-gerencia-config |
-| **Versão do plano** | 1.3 |
+| **Versão do plano** | 1.4 |
 | **Modelo** | Plano de Gerenciamento de Configuração (RUP) |
 
 ## Histórico de revisão
@@ -20,6 +20,7 @@
 | 2026-11-22 | 1.1 | Plano consolidado na estrutura do modelo; seção 3.3.1 (backup, retenção e recuperação); artefato único no pipeline; contagem por AST; correção de divergências apontadas na auditoria 2 | Grupo |
 | 2026-11-22 | 1.2 | Rodada final de correção (auditoria 3): distinção entre o procedimento definido e a prática realizada (proteção da `main`, reviews, CCB, merge, rastreabilidade); papéis × registro no Git; `/health` com versão e verificação pós-deploy por versão; esclarecimento de entrega contínua e do artefato único; baseline `v0.1.2`; números atualizados | Marcos |
 | 2026-11-23 | 1.3 | Proteção da `main` ativada (registrada como ativa, com o *bypass* do administrador); primeira review de PR (#18); ajustes sugeridos na review do `deploy.sh` | Marcos |
+| 2026-11-23 | 1.4 | Relatórios de auditoria das rodadas 1 a 3 removidos da árvore de trabalho (permanecem no histórico do Git; resumo em 3.3.2); tabela de auditorias corrigida | Marcos |
 
 ## Índice
 
@@ -156,7 +157,7 @@ Onde a prática difere do papel definido, vale esta tabela. Em especial, **nenhu
 | Integração contínua | Runner `ubuntu-latest` do GitHub Actions | Build, testes e Aceitação a cada push e PR |
 | Produção | Render, `https://tp-gerencia-config.onrender.com` | Sistema entregue aos usuários |
 
-**Volume e distribuição:** repositório pequeno (**62** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
+**Volume e distribuição:** repositório pequeno (**59** arquivos versionados, conforme `git ls-files`), sete pessoas em máquinas distintas, um único servidor remoto (GitHub). O Render hiberna após inatividade; a primeira requisição pode levar cerca de 1 minuto. Procedimentos de controle de versão estão em 3.1 e 3.2.
 
 ## 3. O Programa de Gerenciamento de Configuração
 
@@ -608,16 +609,15 @@ A correção definitiva entra como nova release de patch (`vX.Y.Z+1`). Tags publ
 - [ ] Proteção da `main` ativa: `gh api repos/<dono>/<repo>/branches/main --jq '{protected, protection}'` mostra `protected: true` e os checks `Etapa de Commit` e `Etapa de Aceitacao` (o endpoint `.../protection` exige permissão de administrador e responde 404 às demais contas, mesmo com a proteção ativa); print de *Settings → Branches* em `docs/evidencias/`
 - [ ] Toda PR mesclada referencia uma issue
 
-**Registro:** o resultado de cada rodada vai em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md` (rodada 1), `docs/auditoria_rodada2.md` (rodada 2) e `docs/auditoria_rodada3.md` (rodada 3), com data, commit auditado, achados e correções. Os relatórios são históricos: descrevem o estado do commit auditado, não o atual.
+**Registro:** cada rodada produz um relatório com data, commit auditado, achados e correções. Os relatórios das rodadas 1 a 3 eram de commits antigos e foram **removidos da árvore de trabalho** (issue #22); o resumo de cada um está na tabela abaixo e os arquivos continuam no histórico do Git, por exemplo: `git show b8ee699:docs/auditoria_configuracao.md`, `git show b8ee699:docs/auditoria_rodada2.md` e `git show b8ee699:docs/auditoria_rodada3.md`. Eles descrevem o estado do commit auditado, não o atual.
 
 **Auditorias realizadas**
 
 | Nº | Data | Commit | Resultado |
 |---|---|---|---|
-| 1 | 2026-11-22 | `cbce85e` | Relatório em `docs/auditoria_configuracao.md` e `docs/auditoria_rodada2.md`: aceitação fora da `main` e seções do plano faltantes; correções aplicadas na branch `fix/aceitacao-e-plano` |
-| 2 | 2026-11-22 | `d042f02` | Relatório em `docs/auditoria_rodada2.md`: faltavam backup/retenção/recuperação (3.3.1), prova de bloqueio do pipeline e artefato único. Corrigidos: seção de backup com teste de recuperação, imagem construída uma só vez e reaproveitada no Lançamento, plano alinhado ao pipeline. Execução vermelha registrada em `docs/evidencias/execucao-vermelha.md` (run 45093573497) |
-
-| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório em `docs/auditoria_rodada3.md`. Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções no PR #18 (issue #17), mesclado em `fdcc342`, com a primeira review registrada do repositório (Rafael) |
+| 1 | 2026-11-22 | `cbce85e` | Relatório `auditoria_configuracao.md` (histórico do Git): aceitação fora da `main` e seções do plano faltantes; correções aplicadas na branch `fix/aceitacao-e-plano` |
+| 2 | 2026-11-22 | `d042f02` | Relatório `auditoria_rodada2.md` (histórico do Git): faltavam backup/retenção/recuperação (3.3.1), prova de bloqueio do pipeline e artefato único. Corrigidos: seção de backup com teste de recuperação, imagem construída uma só vez e reaproveitada no Lançamento, plano alinhado ao pipeline. Execução vermelha registrada em `docs/evidencias/execucao-vermelha.md` (run 45093573497) |
+| 3 | 2026-11-22 | `69b137f` (`v0.1.2`) | Relatório `auditoria_rodada3.md` (histórico do Git). Sem bloqueador. Achados: proteção da `main` descrita mas inativa; nenhuma review de PR registrada; arquivos de auditoria deletados no disco (restaurados); `/health` sem versão; lançamento só em tag e `tsc` do Commit não geram o artefato entregue (esclarecidos no plano); números e datas desatualizados. Correções no PR #18 (issue #17), mesclado em `fdcc342`, com a primeira review registrada do repositório (Rafael) |
 
 **Desvios conhecidos (registrados nas auditorias 2 e 3):**
 
