@@ -92,8 +92,8 @@ O que pode ser gerado de novo a partir dos ICs (`node_modules/`, `dist/`, `cover
 | IC-10 | Empacotamento | `Dockerfile`, `.dockerignore` | Build / implantação | Bernardo |
 | IC-11 | Pipeline de CI/CD | `.github/workflows/pipeline.yml` | Automação | Guilherme (Commit), Mateus (Aceitação), Bernardo (Lançamento) |
 | IC-12 | Regras de exclusão | `.gitignore` | Configuração | Guilherme |
-| IC-13 | README e guia de execução | `README.md`, `docs/como-rodar.md` | Documentação | Gabriela |
-| IC-14 | Plano de GC | `docs/plano/` | Documentação | Todos (unificado por Rafael) |
+| IC-13 | README, guia de execução, changelog, roteiro e evidências | `README.md`, `docs/como-rodar.md`, `docs/changelog.md`, `docs/roteiro-apresentacao.md`, `docs/evidencias/` | Documentação | Gabriela (README e guia); Marcos (changelog, roteiro e evidências) |
+| IC-14 | Plano de GC | `docs/plano/` | Documentação | Todos (consolidado por Marcos com `scripts/entrega/montar_plano.py`; o gerente de configuração, Rafael, é o responsável definido pela lista de ICs) |
 
 ### 2.3 Itens derivados (gerados pelo pipeline)
 
@@ -214,6 +214,8 @@ A versão da aplicação segue o [Versionamento Semântico 2.0.0](https://semver
 | **MINOR** | Funcionalidade nova, compatível | Nova rota, novo filtro em `GET /tasks`, novo campo opcional |
 | **PATCH** | Correção compatível, ou mudança interna que precisa ser implantada | Corrigir uma validação, ajustar o `Dockerfile` ou o pipeline |
 
+**Exceção declarada: `v1.0.0`.** A tabela reserva MAJOR a mudança incompatível, e nenhuma ocorreu. A `v1.0.0` não decorre dessa regra: o SemVer a usa para declarar a **primeira versão estável**, e aqui ela marca a versão final da entrega, com o contrato HTTP congelado (marco M7 do plano). Antes dela, em `0.x`, qualquer mudança podia ser incompatível, segundo o SemVer.
+
 Regras adicionais:
 
 - Enquanto a versão estiver em `0.y.z`, o contrato ainda pode mudar. O grupo publica a `1.0.0` na entrega final do TP, quando o contrato for considerado estável.
@@ -244,6 +246,9 @@ Cada tag `vX.Y.Z` na `main` é uma **baseline de release**: congela o estado de 
 | `v0.1.0` | 17/11/2026 | `e832342` | Scaffold da API, pipeline (Commit), camada de domínio com testes, `Dockerfile` e etapa de Lançamento |
 | `v0.1.1` | 19/11/2026 | `886f61f` | Etapa de Lançamento idempotente em re-run, camada HTTP com testes de unidade e integração |
 | `v0.1.2` | 22/11/2026 | `69b137f` | Etapa de Aceitação no pipeline, script de implantação, artefato único (imagem testada = imagem lançada), plano consolidado, slides, backup e recuperação, evidência da execução vermelha |
+| `v1.0.0` | prevista no marco M6 (2026-11-27) | o commit para o qual a tag `v1.0.0` apontar (merge do PR final) | Primeira versão estável: `/health` com versão e deploy verificado por versão, imagem base e runner com versão exata, `npm audit` registrado, proteção da `main` e fluxo de revisão documentados, auditorias antigas arquivadas no histórico do Git |
+
+Enquanto a tag `v1.0.0` não existir, a linha dela é **prevista**, não uma baseline; `git tag -l v1.0.0` e a aba *Releases* mostram se ela já foi criada.
 
 Regras para uma baseline:
 

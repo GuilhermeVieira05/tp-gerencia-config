@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---------- Estagio 1: build (compila TypeScript) ----------
-FROM node:20-alpine AS build
+FROM node:20.20.2-alpine3.23 AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -12,7 +12,7 @@ COPY src ./src
 RUN npm run build
 
 # ---------- Estagio 2: runtime (so dependencias de producao + dist) ----------
-FROM node:20-alpine AS runtime
+FROM node:20.20.2-alpine3.23 AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production \

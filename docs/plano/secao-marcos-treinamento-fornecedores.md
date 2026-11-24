@@ -35,14 +35,15 @@ Todo software de terceiros é open source ou serviço gratuito. Nada é copiado 
 |---|---|---|---|
 | `express` 4 | npm | Faixa `^4.21.2` em `package.json`; versão exata em `package-lock.json` | PR que altera `package.json` e `package-lock.json` |
 | Dependências de desenvolvimento (`typescript`, `jest`, `ts-jest`, `supertest`, tipos) | npm | Idem | Idem |
-| Imagem base `node:20-alpine` | Docker Hub | Versão maior fixa no `Dockerfile` | PR que altera o `Dockerfile` |
-| Actions (`actions/checkout@v4`, `setup-node@v4`, `docker/*@v3/v5/v6`) | GitHub Marketplace | Versão maior fixa no workflow | PR que altera `pipeline.yml` |
+| Imagem base `node:20.20.2-alpine3.23` | Docker Hub | **Versão exata** fixa no `Dockerfile` (Node, patch e Alpine). Não recebe correções de segurança sozinha: a atualização é feita por PR | PR que altera o `Dockerfile` |
+| Runner `ubuntu-24.04` | GitHub Actions | Versão fixa em `runs-on` (não usa `ubuntu-latest`) | PR que altera `pipeline.yml` |
+| Actions (`actions/checkout@v4`, `setup-node@v4`, `docker/*@v3/v5/v6`) | GitHub Marketplace | Só a **versão maior** é fixada (`@vN`); correções menores chegam sem PR. Limitação aceita: não há fixação por *commit SHA* | PR que altera `pipeline.yml` |
 | GitHub Container Registry | GitHub | Imagens com tag `X.Y.Z`, `X.Y`, `sha-*` e `latest` | Publicado pelo pipeline |
 | Render | Render | Imagem implantada por tag `X.Y.Z` | Deploy hook acionado pelo pipeline |
 
 **Regras:**
 1. Dependência nova entra por PR, com justificativa, e sempre com `package-lock.json` atualizado; a instalação usa `npm ci`.
 2. Atualizações de versão maior passam pelo CCB (afetam o contrato e o pipeline).
-3. Antes de cada tag, roda-se `npm audit` e registram-se vulnerabilidades altas ou críticas na auditoria.
+3. Antes de cada tag, roda-se `npm audit` e registram-se vulnerabilidades altas ou críticas na auditoria. Última execução: 2026-11-23, **0 vulnerabilidades** (inclusive só de produção), registrada em `docs/evidencias/npm-audit.md`.
 4. Licenças: apenas licenças permissivas (MIT, Apache-2.0, ISC, BSD); conferir ao adicionar dependência.
 5. Falha de um fornecedor (Render ou GHCR fora do ar): o artefato continua reproduzível a partir da tag com `docker build`; a versão anterior da imagem permite *rollback*.

@@ -16,7 +16,7 @@ jobs:
   # Etapa de Commit: build + testes unitarios + testes de integracao
   commit-stage:
     name: Etapa de Commit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -37,7 +37,7 @@ jobs:
   acceptance-stage:
     name: Etapa de Aceitacao
     needs: commit-stage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     outputs:
       image_id: ${{ steps.build.outputs.image_id }}
     env:
@@ -104,7 +104,7 @@ jobs:
     name: Etapa de Lancamento
     needs: acceptance-stage
     if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     environment:
       name: production
       url: ${{ vars.RENDER_APP_URL }}
